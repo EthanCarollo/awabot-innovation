@@ -112,7 +112,10 @@ Bien que Mistral AI mette à disposition une **API cloud** pour la transcription
 *   **Souveraineté des données** : Les flux audio des visiteurs ne transitent jamais par un serveur tiers, conformément aux exigences RGPD et de confidentialité du projet.
 *   **Latence optimale** : Le modèle étant co-hébergé avec le reste de l'infrastructure, la latence réseau est minimisée par rapport à un appel API distant.
 
-### 3.4 Benchmarks ASR
+::video-showcase{src="/test-voxtral.mp4" caption="Démonstration de la transcription temps réel avec Voxtral Mini 4B"}
+::
+
+### 3.4 Benchmarks (ASR)
 
 En complément de Voxtral, nous avons évalué les performances d'autres modèles de pointe, notamment la série **Qwen3-ASR**. Ces modèles offrent une alternative solide avec une efficacité remarquable.
 
@@ -151,6 +154,9 @@ L'utilisation de **Qwen3-ASR (1.7B)** est une option sérieuse si l'on recherche
 Cependant, il est important de noter que le modèle chinois Qwen3-ASR performe particulierement avec l'anglais et le chinois, mais beaucoup moins bien avec le français ou l'espagnol par exemple. Là où le modèle Voxtral par contre permet une très bonne transcription dans les langues européennes.
 
 Nous sommes donc confiant sur le fait qu'il faut faire un mélange de Qwen3 ASR dans les langues qu'ils gèrent le mieux, et Voxtral pour les langues européennes.
+
+::video-showcase{src="/test-qwenasr.mp4" caption="Démonstration de la transcription temps réel avec Qwen3-ASR (1.7B)"}
+::
 
 ### 3.5 Traduction
 
