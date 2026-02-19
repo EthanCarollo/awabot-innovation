@@ -1,0 +1,18 @@
+name: voxtral
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - vllm --extra-index-url https://wheels.vllm.ai/nightly
+      - mistral-common[audio]>=1.9.0
+      - transformers>=5.0.0
+      - gradio>=5.0.0
+      - websockets
+      - numpy
+      - opencv-python-headless
+      - soxr
+      - librosa
+      - soundfile
