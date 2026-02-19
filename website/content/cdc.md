@@ -136,17 +136,21 @@ En complément de Voxtral, nous avons évalué les performances d'autres modèle
 ```mermaid
 xychart-beta
     title "Comparatif Performance ASR (Fleurs-en)"
-    x-axis ["Voxtral Mini", "Qwen3-0.6B", "Qwen3-1.7B"]
+    x-axis ["Voxtral Mini (960ms)", "Qwen3-0.6B", "Qwen3-1.7B"]
     y-axis "WER (%)" 0 --> 10
-    bar [7.2, 4.39, 3.35]
+    bar [4.3, 4.39, 3.35]
 ```
 
 > [!NOTE]
-> Bien que Voxtral soit extrêmement rapide pour du temps réel pur, la série **Qwen3** montre une précision (WER) supérieure sur les tests de traduction/transcription complexes.
+> Bien que Voxtral soit extrêmement rapide pour du temps réel pur, la série **Qwen3** montre une précision (WER) supérieure sur les tests de transcription complexes dans le benchmark Fleurs en Anglais.
 
 L'utilisation de **Qwen3-ASR (1.7B)** est une option sérieuse si l'on recherche un compromis optimal entre vitesse d'inférence et précision, particulièrement sur les datasets longs ou complexes.
 
 > **IMPORTANT : Souveraineté et modèles Open-Weight** : Dans une stratégie d'auto-hébergement, la provenance géographique d'un modèle (ex: modèles chinois comme Qwen) ne constitue pas un risque de sécurité ou de confidentialité. Contrairement à une utilisation via API Cloud soumise à des politiques de collecte de données tierces, un modèle **Open-Weight** exécuté sur notre propre infrastructure est totalement isolé. Le flux de données est géré de bout en bout par Awabot, garantissant l'absence de fuites ou de surveillance externe.
+
+Cependant, il est important de noter que le modèle chinois Qwen3-ASR performe particulierement avec l'anglais et le chinois, mais beaucoup moins bien avec le français ou l'espagnol par exemple. Là où le modèle Voxtral par contre permet une très bonne transcription dans les langues européennes.
+
+Nous sommes donc confiant sur le fait qu'il faut faire un mélange de Qwen3 ASR dans les langues qu'ils gèrent le mieux, et Voxtral pour les langues européennes.
 
 ### 3.5 Traduction
 
@@ -161,8 +165,8 @@ L'usage de modèles de langage (LLM) pour la traduction offre une opportunité d
 Le flux de données suit un cycle itératif conçu pour minimiser la latence perçue :
 1.  **Capture Audio** : Le robot transmet le flux audio au serveur d'inférence.
 2.  **Transcription (ASR)** : Le texte est généré en temps réel par Voxtral ou Qwen3.
-3.  **Traduction (NMT)** : Le texte transcrit est immédiatement envoyé à un modèle de traduction (Neural Machine Translation) pour être affiché dans la langue cible du visiteur.
-4.  **Affichage/Synthèse** : Le visiteur reçoit le texte traduit sur son cockpit, permettant une compréhension immédiate.
+3.  **Traduction (NMT)** : Le texte transcrit est envoyé à un modèle de traduction (Neural Machine Translation) pour être converti dans la langue cible.
+4.  **Synthèse Vocale (TTS)** : Une fois qu'une phrase complète est détectée, le texte traduit est transformé en parole via un modèle de synthèse, permettant une communication orale fluide.
 
 **Solutions de traduction envisagées :**
 Pour maintenir la souveraineté et la performance, nous préconisons :
@@ -174,6 +178,17 @@ Pour maintenir la souveraineté et la performance, nous préconisons :
 
 Cette boucle garantit que l'interaction reste "vivante" et naturelle, même à travers une barrière linguistique.
 
+
+### 3.6 Synthèse vocale (TTS)
+
+La dernière étape du moteur d'interaction consiste à transformer le texte traduit en signal vocal. L'objectif est de permettre un échange naturel où les paroles de l'utilisateur sont restituées dans la langue du pays d'accueil.
+
+**Stratégie de restitution :**
+*   **Déclenchement intelligent** : La synthèse (TTS) est lancée automatiquement dès qu'une fin de phrase est détectée par le modèle de langage, garantissant une latence minimale.
+*   **Modèle recommandé : [Qwen3-TTS (0.6B)](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base)** :
+    *   **Extrême légèreté** : Avec seulement 600M de paramètres, il est extrêmement rapide et facile à mettre en production sur une architecture optimisée.
+    *   **Clonage de voix** : Permet de cloner une voix spécifique pour une expérience utilisateur personnalisée.
+*   **Exclusion de [Hibiki (Kyutai)](https://kyutai.org/blog/2025-02-10-hibiki)** : Bien que prometteur, ce modèle (sorti en février 2026) est jugé trop peu mature. Son architecture est actuellement limitée au français et à l'anglais, ce qui ne répond pas aux ambitions multilingues du projet.
 
 ## 4. Conception UI et logique d'intégration
 
@@ -274,6 +289,9 @@ Ce projet positionne Awabot comme un précurseur de la téléprésence intellige
     - [HY-MT (Tencent)](https://huggingface.co/tencent/HY-MT1.5-1.8B) — Modèle multilingue de haute qualité.
     - [Gemma Translate](https://huggingface.co/google/translategemma-4b-it) — Traduction optimisée par Google.
     - [LibreTranslate](https://fr.libretranslate.com/) — Solution open-source auto-hébergée.
+*   **Synthèse Vocale (TTS)** :
+    *   [Qwen3-TTS](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base) — Modèle léger (0.6B) avec clonage de voix.
+    *   [Hibiki (Blog Post)](https://kyutai.org/blog/2025-02-10-hibiki) — Étude de cas sur les modèles de voix (écarté pour le projet).
 *   **Frontend & Analytics** :
     *   [Nuxt.js](https://nuxt.com/) — Framework Web & SSR.
     *   [TailwindCSS](https://tailwindcss.com/) — Design system & CSS framework.
