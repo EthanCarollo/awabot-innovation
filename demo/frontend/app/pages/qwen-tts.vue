@@ -33,14 +33,36 @@
         <p class="audio-info">Format: WAV — Qwen3-TTS (0.6B)</p>
       </div>
     </div>
+
+    <!-- Model Info Section -->
+    <div class="card info-card">
+      <div class="card-header">
+        <h2 class="section-title">A propos du modele</h2>
+      </div>
+      <div class="info-content">
+        <div class="info-item">
+          <strong>Modele :</strong>
+          <code>Qwen/Qwen3-TTS-12Hz-0.6B-Base</code>
+        </div>
+        <div class="info-item">
+          <strong>Description :</strong>
+          Modèle de synthèse vocale ultra-léger (600M) capable de générer une voix naturelle avec un support multilingue et clonage de voix.
+        </div>
+        <div class="info-footer">
+          <a href="https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base" target="_blank" class="hf-link">
+            <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="HF" class="hf-logo" />
+            Voir sur Hugging Face
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
 
-const config = useRuntimeConfig()
-const wsUrl = `${config.public.wsBackendBase}/ws/qwen-tts`
+const wsUrl = `ws://localhost:8084/ws/qwen-tts`
 
 const status = ref<'idle' | 'connecting' | 'connected' | 'generating' | 'error'>('idle')
 const isGenerating = ref(false)
@@ -108,7 +130,7 @@ onUnmounted(() => { ws?.close(); ws = null })
   background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px;
   padding: 16px; resize: vertical; outline: none; transition: border-color .2s;
 }
-.textarea:focus { border-color: var(--orange); }
+.textarea:focus { border-color: var(--yellow); }
 .textarea::placeholder { color: var(--text-muted); }
 .input-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
 .char-count { font-size: 12px; color: var(--text-muted); }
@@ -120,4 +142,26 @@ onUnmounted(() => { ws?.close(); ws = null })
 .audio-player { text-align: center; }
 .player { width: 100%; border-radius: 12px; margin-bottom: 8px; }
 .audio-info { font-size: 12px; color: var(--text-muted); }
+
+/* Info Section */
+.info-card { margin-top: 16px; }
+.info-content { font-size: 14px; line-height: 1.6; color: var(--text); }
+.info-item { margin-bottom: 12px; }
+.info-item code { background: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #d97706; }
+.info-footer { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+.hf-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  background: var(--bg);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.hf-link:hover { background: var(--border); }
+.hf-logo { width: 20px; height: 20px; }
 </style>
