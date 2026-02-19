@@ -11,13 +11,13 @@ import {
  * Voxtral: 960ms delay
  */
 const MODELS = [
-  { name: "Voxtral Mini 4B", fr: 94.32, en: 95.66, zh: 92.1, color: "#3B82F6" },
-  { name: "Qwen3-ASR 1.7B", fr: 92.8, en: 96.65, zh: 97.2, color: "#8B5CF6" },
+  { name: "Voxtral Mini 4B", fr: 94.32, en: 95.66, zh: 92.1, color: "#FF7E22" },
+  { name: "Qwen3-ASR 1.7B", fr: 92.8, en: 96.65, zh: 97.2, color: "#FAC130" },
 ];
 
 const FLOOR = 85;
 const CEIL = 100;
-const BAR_HEIGHT = 200;
+const BAR_HEIGHT = 480;
 
 const BarPair = ({
   model,
@@ -62,7 +62,7 @@ const BarPair = ({
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
       <span
         style={{
-          fontSize: 18,
+          fontSize: 32,
           fontWeight: 800,
           color: model.color,
           opacity: labelOpacity,
@@ -73,10 +73,10 @@ const BarPair = ({
       </span>
       <div
         style={{
-          width: 48,
+          width: 120, // Increased bar width
           height: BAR_HEIGHT,
           backgroundColor: "#F1F5F9",
-          borderRadius: 10,
+          borderRadius: 20,
           display: "flex",
           flexDirection: "column",
           justifyContent: "flex-end",
@@ -88,12 +88,11 @@ const BarPair = ({
             width: "100%",
             height: height,
             backgroundColor: model.color,
-            borderRadius: 10,
             opacity: flag === "🇨🇳" ? 1 : (flag === "🇬🇧" ? 0.85 : 0.7),
           }}
         />
       </div>
-      <span style={{ fontSize: 14, fontWeight: 600, color: "#64748B" }}>{flag}</span>
+      <span style={{ fontSize: 32, fontWeight: 600, color: "#64748B" }}>{flag}</span>
     </div>
   );
 
@@ -106,7 +105,7 @@ const BarPair = ({
         flex: 1,
       }}
     >
-      <div style={{ display: "flex", gap: 8, alignItems: "flex-end", height: BAR_HEIGHT + 40 }}>
+      <div style={{ display: "flex", gap: 16, alignItems: "flex-end", height: BAR_HEIGHT + 100 }}>
         {renderBar(model.fr, frH, "🇫🇷", frProgress)}
         {renderBar(model.en, enH, "🇬🇧", enProgress)}
         {renderBar(model.zh, zhH, "🇨🇳", zhProgress)}
@@ -114,12 +113,12 @@ const BarPair = ({
 
       <div
         style={{
-          marginTop: 18,
-          fontSize: 20,
+          marginTop: 40,
+          fontSize: 48,
           fontWeight: 800,
           color: "#0F172A",
           textAlign: "center" as const,
-          letterSpacing: "-0.5px",
+          letterSpacing: "-1px",
         }}
       >
         {model.name}
@@ -133,12 +132,12 @@ export const MyComposition = () => {
     <AbsoluteFill
       style={{
         backgroundColor: "white",
-        padding: "50px 60px 40px",
+        padding: "100px 120px 80px",
         fontFamily: "'Inter', 'SF Pro Display', system-ui, sans-serif",
         flexDirection: "row",
         alignItems: "flex-end",
         justifyContent: "center",
-        gap: 50,
+        gap: 120,
       }}
     >
       {MODELS.map((m, i) => (

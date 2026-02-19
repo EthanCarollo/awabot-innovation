@@ -26,29 +26,51 @@
             </div>
 
             <div class="input-group">
-              <label class="field-label">Voix a cloner (Optionnel)</label>
-              <div class="file-upload-wrapper" :class="{ 'has-file': !!promptAudioFile }">
-                <input 
-                  type="file" 
-                  id="clone-audio" 
-                  accept="audio/*" 
-                  class="file-input" 
-                  @change="handleFileChange"
-                />
-                <label for="clone-audio" class="file-label">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4a2 2 0 0 1 2-2h14"/>
-                    <polyline points="17 8 12 3 7 8"/>
-                    <line x1="12" y1="3" x2="12" y2="15"/>
-                  </svg>
-                  <span>{{ promptAudioFile ? 'Audio prêt' : 'Référence...' }}</span>
-                </label>
-                <button v-if="promptAudioFile" class="btn-clear-file" @click.stop="clearFile">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
+              <label class="field-label">Reference Vocale</label>
+              <div class="voice-ref-actions">
+                <div class="file-upload-wrapper" :class="{ 'has-file': !!promptAudioFile && !isRecordingRef }">
+                  <input 
+                    type="file" 
+                    id="clone-audio" 
+                    accept="audio/*" 
+                    class="file-input" 
+                    @change="handleFileChange"
+                    :disabled="isRecordingRef"
+                  />
+                  <label for="clone-audio" class="file-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4a2 2 0 0 1 2-2h14"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span>{{ promptAudioFile && !isRecordingRef ? 'Fichier prêt' : 'Envoyer...' }}</span>
+                  </label>
+                  <button v-if="promptAudioFile && !isRecordingRef" class="btn-clear-file" @click.stop="clearFile">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="record-ref-wrapper">
+                  <button 
+                    class="btn-record-ref" 
+                    :class="{ 'is-recording': isRecordingRef }"
+                    @click="toggleRefRecording"
+                  >
+                    <div v-if="!isRecordingRef" class="mic-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                      </svg>
+                    </div>
+                    <div v-else class="stop-box"></div>
+                    <span>{{ isRecordingRef ? 'Arrêter' : 'Enregistrer' }}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -59,11 +81,11 @@
               v-model="promptText"
               class="textarea textarea-sm"
               rows="2"
-              placeholder="Que dit la voix dans l'audio de référence ?"
+              placeholder="Tapez exactement ce que vous avez dit..."
             />
-            <p class="hint">Indispensable pour un clonage précis.</p>
+            <p class="hint">Indispensable pour que le clonage soit parfait.</p>
           </div>
-          <p v-else class="hint">Upload d'un échantillon (wav/mp3) pour imiter une voix spécifique.</p>
+          <p v-else class="hint">Utilisez un fichier ou enregistrez-vous pour cloner votre voix.</p>
         </div>
 
         <div class="spacer-v"></div>
@@ -182,6 +204,10 @@ const promptAudioFile = ref<File | null>(null)
 const audioSrc = ref('')
 const errorMsg = ref('')
 
+const isRecordingRef = ref(false)
+let mediaRecorder: MediaRecorder | null = null
+let audioChunks: Blob[] = []
+
 const languages = ['French', 'English', 'Chinese', 'Japanese', 'Spanish', 'German', 'Italian']
 
 let ws: WebSocket | null = null
@@ -193,7 +219,39 @@ function handleFileChange(event: Event) {
   }
 }
 
+async function toggleRefRecording() {
+  if (isRecordingRef.value) {
+    mediaRecorder?.stop()
+    isRecordingRef.value = false
+    return
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    mediaRecorder = new MediaRecorder(stream)
+    audioChunks = []
+
+    mediaRecorder.ondataavailable = (event) => {
+      audioChunks.push(event.data)
+    }
+
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+      promptAudioFile.value = new File([audioBlob], 'recording.wav', { type: 'audio/wav' })
+      stream.getTracks().forEach(t => t.stop())
+    }
+
+    mediaRecorder.start()
+    isRecordingRef.value = true
+    errorMsg.value = ""
+  } catch (err) {
+    console.error("Error accessing microphone:", err)
+    errorMsg.value = "Impossible d'accéder au microphone."
+  }
+}
+
 function clearFile() {
+  if (isRecordingRef.value) toggleRefRecording()
   promptAudioFile.value = null
   promptText.value = ''
   const input = document.getElementById('clone-audio') as HTMLInputElement
@@ -342,6 +400,38 @@ onUnmounted(() => { ws?.close(); ws = null })
 .file-label { display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 13px; font-weight: 600; flex: 1; pointer-events: none; overflow: hidden; }
 .file-label span { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 .file-upload-wrapper.has-file .file-label { color: var(--carbon); }
+
+.voice-ref-actions { display: flex; gap: 12px; align-items: stretch; }
+.file-upload-wrapper { flex: 1; margin-bottom: 0px !important; }
+
+.btn-record-ref {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  padding: 0 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--carbon);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-record-ref:hover { border-color: #f43f5e; color: #f43f5e; background: #fff1f2; }
+.btn-record-ref.is-recording { background: #f43f5e; border-color: #f43f5e; color: white; animation: pulse-red 2s infinite; }
+
+.stop-box { width: 10px; height: 10px; background: currentColor; border-radius: 2px; }
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+}
 
 .btn-clear-file {
   position: relative;

@@ -136,7 +136,7 @@
           <div class="w-full lg:w-1/2 relative">
             <div class="relative w-full aspect-[4/3] rounded-[60px] overflow-hidden shadow-2xl shadow-awabot-carbon/10">
                <!-- Classroom Image Placeholder -->
-               <img src="/voxtral_benchmark.png" alt="Education" class="w-full h-full object-cover" />
+               <img src="/telepresence.png" alt="Education" class="w-full h-full object-cover" />
             </div>
           </div>
           <div class="w-full lg:w-1/2">

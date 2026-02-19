@@ -56,11 +56,25 @@ export function useAudioCapture(wsUrl: string) {
 
         ws = new WebSocket(wsUrl)
         ws.onopen = () => { status.value = 'connected' }
+        const committedTranscript = ref('')
+        const currentSegmentTranscript = ref('')
+
         ws.onmessage = (e) => {
             const m = JSON.parse(e.data)
-            if (m.type === 'status' && m.message === 'ready') status.value = 'ready'
-            else if (m.type === 'transcript') transcript.value += m.text
-            else if (m.type === 'error') { console.error(m.message); status.value = 'error' }
+            if (m.type === 'status' && m.message === 'ready') {
+                status.value = 'ready'
+            } else if (m.type === 'transcript') {
+                if (m.is_final) {
+                    committedTranscript.value += (committedTranscript.value ? ' ' : '') + m.text
+                    currentSegmentTranscript.value = ''
+                } else {
+                    currentSegmentTranscript.value = m.text
+                }
+                transcript.value = committedTranscript.value + (currentSegmentTranscript.value ? (committedTranscript.value ? ' ' : '') + currentSegmentTranscript.value : '')
+            } else if (m.type === 'error') {
+                console.error(m.message)
+                status.value = 'error'
+            }
         }
         ws.onerror = () => { status.value = 'error' }
         ws.onclose = () => { if (isRecording.value) status.value = 'error' }

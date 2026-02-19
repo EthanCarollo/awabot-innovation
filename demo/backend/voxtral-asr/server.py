@@ -35,7 +35,7 @@ async def load_model():
         print("[VoxtralASR] vLLM not installed. Endpoint will return errors.")
         return
     print(f"[VoxtralASR] Loading {MODEL} via vLLM…")
-    llm = LLM(model=MODEL, dtype="bfloat16", max_model_len=4096)
+    llm = LLM(model=MODEL, dtype="bfloat16", trust_remote_code=True)
     print("[VoxtralASR] Model loaded.")
 
 
@@ -69,6 +69,13 @@ async def ws_voxtral(ws: WebSocket):
 
     await ws.send_json({"type": "status", "message": "ready"})
     audio_buffer = bytearray()
+    
+    # VAD & Incremental Buffering state
+    MAX_BUFFER_SIZE = 16000 * 2 * 30  # 30 seconds max
+    SILENCE_THRESHOLD = 0.01  # RMS threshold
+    SILENCE_DURATION_LIMIT = 0.8  # seconds
+    
+    current_silence_duration = 0.0
 
     try:
         while True:
@@ -76,18 +83,39 @@ async def ws_voxtral(ws: WebSocket):
             msg = json.loads(raw)
 
             if msg.get("type") == "audio" and "data" in msg:
-                audio_buffer.extend(base64.b64decode(msg["data"]))
+                chunk_bytes = base64.b64decode(msg["data"])
+                audio_buffer.extend(chunk_bytes)
+                
+                # Check for silence in the new chunk
+                chunk_pcm = np.frombuffer(chunk_bytes, dtype=np.int16)
+                chunk_float = chunk_pcm.astype(np.float32) / 32768.0
+                rms = np.sqrt(np.mean(chunk_float**2)) if len(chunk_float) > 0 else 0
+                
+                chunk_duration = len(chunk_pcm) / 16000.0
+                if rms < SILENCE_THRESHOLD:
+                    current_silence_duration += chunk_duration
+                else:
+                    current_silence_duration = 0.0
 
-                if len(audio_buffer) >= 32000:
+                # Process every ~0.25s of audio to keep latency low
+                if len(audio_buffer) >= 8000:
                     pcm = np.frombuffer(bytes(audio_buffer), dtype=np.int16)
-                    audio_float = pcm.astype(np.float32) / 32767.0
+                    audio_float = pcm.astype(np.float32) / 32768.0
 
                     loop = asyncio.get_event_loop()
                     result = await loop.run_in_executor(None, _transcribe, audio_float)
 
                     if result:
-                        await ws.send_json({"type": "transcript", "text": result + " "})
-                    audio_buffer.clear()
+                        await ws.send_json({
+                            "type": "transcript", 
+                            "text": result,
+                            "is_final": current_silence_duration >= SILENCE_DURATION_LIMIT
+                        })
+
+                    # If silence is long enough, we "commit" this segment and clear buffer
+                    if current_silence_duration >= SILENCE_DURATION_LIMIT or len(audio_buffer) > MAX_BUFFER_SIZE:
+                        audio_buffer.clear()
+                        current_silence_duration = 0.0
 
     except WebSocketDisconnect:
         pass

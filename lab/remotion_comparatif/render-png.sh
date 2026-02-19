@@ -3,7 +3,7 @@ set -euo pipefail
 
 mkdir -p out
 
-echo "🖼️  Rendering ASRComparatif to PNG (last frame)..."
+echo "🖼️  Rendering ASRComparatif to PNG (last frame) - 1080p..."
 
 npx remotion still \
   ASRComparatif \

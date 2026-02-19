@@ -7,46 +7,18 @@ SoX could not be found!
     If you do (or think that you should) have SoX, double-check your
     path variables.
     
-INFO:     Started server process [165512]
+INFO:     Started server process [8282]
 INFO:     Waiting for application startup.
-ERROR:    Traceback (most recent call last):
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/starlette/routing.py", line 694, in lifespan
-    async with self.lifespan_context(app) as maybe_state:
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/fastapi/routing.py", line 226, in __aenter__
-    await self._router._startup()
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/fa[QwenTTS] Model loaded.
-INFO:     127.0.0.1:57424 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59248 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51888 - "WebSocket /ws/qwen-tts" [accepted]
-INFO:     connection open
-Setting `pad_token_id` to `eos_token_id`:2150 for open-end generation.
-/qwen3_tts_model.py", line 112, in from_pretrained
-    model = AutoModel.from_pretrained(pretrained_model_name_or_path, **kwargs)
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 604, in from_pretrained
-    return model_class.from_pretrained(
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/qwen_tts/core/models/modeling_qwen3_tts.py", line 1876, in from_pretrained
-    model = super().from_pretrained(
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/transformers/modeling_utils.py", line 277, in _wrapper
-    return func(*args, **kwargs)
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/transformers/modeling_utils.py", line 5048, in from_pretrained
-    ) = cls._load_pretrained_model(
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/transformers/modeling_utils.py", line 5432, in _load_pretrained_model
-    caching_allocator_warmup(model, expanded_device_map, hf_quantizer)
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/transformers/modeling_utils.py", line 6090, in caching_allocator_warmup
-    device_memory = torch_accelerator_module.mem_get_info(index)[0]
-  File "/home/eth/miniconda3/envs/awabot-qwen-tts/lib/python3.10/site-packages/torch/cuda/memory.py", line 897, in mem_get_info
-    return torch.cuda.cudart().cudaMemGetInfo(device)
-torch.AcceleratorError: CUDA error: out of memory
-Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
-CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
-For debugging consider passing CUDA_LAUNCH_BLOCKING=1
-Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
-
-
-ERROR:    Application startup failed. Exiting.
 
 ********
 Warning: flash-attn is not installed. Will only run the manual PyTorch version. Please install flash-attn for faster inference.
 ********
  
 [QwenTTS] Loading Qwen/Qwen3-TTS-12Hz-0.6B-Base on cuda:0…
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 6143.25it/s]
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8084 (Press CTRL+C to quit)
+[QwenTTS] Model loaded.
+INFO:     127.0.0.1:58822 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58822 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58822 - "GET /health HTTP/1.1" 200 OK
