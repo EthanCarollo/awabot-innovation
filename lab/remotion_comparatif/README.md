@@ -1,4 +1,8 @@
-# Remotion video
+<p align="center">
+  <img src="../../website/public/logo_baseline.svg" width="300" alt="Awabot Logo">
+</p>
+
+# Remotion Comparatif ASR
 
 <p align="center">
   <a href="https://github.com/remotion-dev/logo">

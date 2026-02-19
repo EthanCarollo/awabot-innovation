@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../website/public/logo_baseline.svg" width="300" alt="Awabot Logo">
+</p>
+
 # Voxtral Realtime Demo
 
 Transcription audio en temps réel via **Voxtral Mini 4B** (vLLM Realtime API).

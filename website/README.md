@@ -1,4 +1,8 @@
-# Nuxt Minimal Starter
+<p align="center">
+  <img src="public/logo_baseline.svg" width="300" alt="Awabot Logo">
+</p>
+
+# Awabot Website
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 

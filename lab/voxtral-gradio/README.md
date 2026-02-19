@@ -1,4 +1,9 @@
-# 🎙️ Voxtral Realtime — Prototype Caméra + Transcription
+# 🎙️<p align="center">
+  <img src="../../website/public/logo_baseline.svg" width="300" alt="Awabot Logo">
+</p>
+
+# Voxtral Gradio Prototype
+ Caméra + Transcription
 
 Prototype rapide pour tester **Voxtral Mini 4B Realtime** avec :
 - 📹 Retour caméra en direct

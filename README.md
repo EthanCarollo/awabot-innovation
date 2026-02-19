@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="website/public/logo_baseline.svg" alt="Awabot" height="80" />
+  <img src="website/public/logo_baseline.svg" width="300" alt="Awabot Logo">
 </p>
 
-<h3 align="center">Awabot Innovation — Téléprésence Intelligente</h3>
+# Awabot Innovation — Téléprésence Intelligente
 
 <p align="center">
   <a href="https://github.com/EthanCarollo/awabot-innovation"><img alt="GitHub" src="https://img.shields.io/badge/github-awabot--innovation-orange?logo=github&style=flat-square" /></a>
