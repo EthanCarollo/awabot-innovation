@@ -129,7 +129,7 @@ En complément de Voxtral, nous avons évalué les performances d'autres modèle
 | Fleurs-zh | WER | 2.88 | **2.41** |
 
 **Graphique comparatif — Fleurs-en (WER) :**
-*(Le score le plus bas est le meilleur)*
+*(Le score le plus bas est le meilleur. Le **WER** — Word Error Rate — mesure le pourcentage de mots incorrectement transcrits : plus il est proche de 0, plus la transcription est fidèle.)*
 
 **Comparatif Final — Voxtral vs Qwen3 (WER) :**
 
@@ -189,12 +189,10 @@ La dernière étape du moteur d'interaction consiste à transformer le texte tra
     *   **Extrême légèreté** : Avec seulement 600M de paramètres, il est extrêmement rapide et facile à mettre en production sur une architecture optimisée.
     *   **Clonage de voix** : Permet de cloner une voix spécifique pour une expérience utilisateur personnalisée.
 
-<video-showcase 
-  src="/test-qwentts.mp4" 
-  caption="Démonstration du clonage vocal Qwen3-TTS (0.6B) en local"
-/>
+::video-showcase{src="/test-qwentts.mp4" caption="Démonstration du clonage vocal Qwen3-TTS (0.6B) en local"}
+::
 
-> [!IMPORTANT]
+> NOTE : 
 > **Viabilité et Déploiement Professionnel** : Cette vidéo démontre que Qwen3-TTS peut être exécuté localement avec une fluidité totale sur une configuration grand public modeste (NVIDIA RTX 5060). 
 > Le modèle étant extrêmement compact (600M), son déploiement sur des infrastructures professionnelles haute performance (ex: NVIDIA H200 ou H100) ne posera aucune difficulté technique et offrira une latence quasiment imperceptible, idéale pour des environnements de production à haute disponibilité.
 

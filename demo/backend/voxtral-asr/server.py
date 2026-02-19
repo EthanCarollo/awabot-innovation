@@ -1,6 +1,7 @@
 import os
-os.environ["VLLM_USE_V1"] = "0"
-os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
+os.environ["VLLM_USE_V1"] = "0" # Retired in 0.15.1? Let's check if it still works as fallback.
+# os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
+os.environ["VLLM_LOGGING_LEVEL"] = "DEBUG"
 
 import json
 import base64
@@ -38,7 +39,10 @@ async def load_model():
         model=MODEL, 
         dtype="bfloat16", 
         trust_remote_code=True,
-        max_model_len=4096
+        max_model_len=4096,
+        hf_overrides={"sliding_window": 4096},
+        enforce_eager=True,
+        gpu_memory_utilization=0.7
     )
     print("[VoxtralASR] Model loaded.")
 
@@ -104,6 +108,11 @@ async def ws_voxtral(ws: WebSocket):
                 # Process every ~0.25s of audio to keep latency low
                 if len(audio_buffer) >= 8000:
                     pcm = np.frombuffer(bytes(audio_buffer), dtype=np.int16)
+                    # Limit window to last 7 seconds to keep latency low
+                    WINDOW_SIZE = 16000 * 7
+                    if len(pcm) > WINDOW_SIZE:
+                        pcm = pcm[-WINDOW_SIZE:]
+                        
                     audio_float = pcm.astype(np.float32) / 32768.0
 
                     loop = asyncio.get_event_loop()
@@ -116,10 +125,15 @@ async def ws_voxtral(ws: WebSocket):
                             "is_final": current_silence_duration >= SILENCE_DURATION_LIMIT
                         })
 
-                    # If silence is long enough, we "commit" this segment and clear buffer
-                    if current_silence_duration >= SILENCE_DURATION_LIMIT or len(audio_buffer) > MAX_BUFFER_SIZE:
+                    # If silence is long enough, we clear buffer
+                    if current_silence_duration >= SILENCE_DURATION_LIMIT:
                         audio_buffer.clear()
                         current_silence_duration = 0.0
+                    elif len(audio_buffer) > MAX_BUFFER_SIZE:
+                        # Fallback: keep just the end for context
+                        new_buffer = audio_buffer[-8000:]
+                        audio_buffer.clear()
+                        audio_buffer.extend(new_buffer)
 
     except WebSocketDisconnect:
         pass

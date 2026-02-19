@@ -80,10 +80,14 @@ async def ws_qwen_asr(ws: WebSocket):
                 else:
                     current_silence_duration = 0.0
 
-                # Process if we have enough audio (e.g., every 0.5s of NEW audio or if silent)
-                # But to avoid huge lag, we transcribe the current segment frequently
-                if len(audio_buffer) >= 8000: # Every 0.25s roughly
+                # Process if we have enough audio (e.g., every 0.25s roughly)
+                if len(audio_buffer) >= 8000: 
                     pcm = np.frombuffer(bytes(audio_buffer), dtype=np.int16)
+                    # Limit window to last 7 seconds to keep latency low
+                    WINDOW_SIZE = 16000 * 7
+                    if len(pcm) > WINDOW_SIZE:
+                        pcm = pcm[-WINDOW_SIZE:]
+                    
                     audio_float = pcm.astype(np.float32) / 32768.0
 
                     results = model.transcribe(
@@ -93,17 +97,22 @@ async def ws_qwen_asr(ws: WebSocket):
 
                     if results and results[0].text:
                         text = results[0].text.strip()
-                        # We send the "full current segment" transcript
                         await ws.send_json({
                             "type": "transcript", 
                             "text": text,
                             "is_final": current_silence_duration >= SILENCE_DURATION_LIMIT
                         })
 
-                    # If silence is long enough, we "commit" this segment and clear buffer
-                    if current_silence_duration >= SILENCE_DURATION_LIMIT or len(audio_buffer) > MAX_BUFFER_SIZE:
+                    # If silence is long enough, we clear buffer
+                    if current_silence_duration >= SILENCE_DURATION_LIMIT:
                         audio_buffer.clear()
                         current_silence_duration = 0.0
+                    elif len(audio_buffer) > MAX_BUFFER_SIZE:
+                        # Fallback for very long speech without silence: 
+                        # just keep the last few samples to maintain context
+                        new_buffer = audio_buffer[-8000:]
+                        audio_buffer.clear()
+                        audio_buffer.extend(new_buffer)
 
     except WebSocketDisconnect:
         pass
