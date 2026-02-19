@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- Hero -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.15),transparent_50%)]" />
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(139,92,246,0.1),transparent_50%)]" />
+    <section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,126,34,0.15),transparent_50%)]" />
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(250,193,48,0.1),transparent_50%)]" />
 
       <nav class="relative z-10 flex items-center justify-between px-8 py-6 max-w-6xl mx-auto">
         <div class="text-2xl font-extrabold tracking-tight text-white">
-          awa<span class="text-blue-400">bot</span>
+          awa<span class="text-awabot-orange">bot</span>
         </div>
         <div class="flex items-center gap-6">
           <NuxtLink to="/cdc" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">
@@ -17,13 +17,13 @@
       </nav>
 
       <div class="relative z-10 max-w-4xl mx-auto px-8 pt-24 pb-32 text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm font-medium mb-8">
-          <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-awabot-orange/10 border border-awabot-orange/20 text-awabot-yellow text-sm font-medium mb-8">
+          <span class="w-2 h-2 rounded-full bg-awabot-orange animate-pulse" />
           Robotique sociale & IA
         </div>
         <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6">
           L'assistant intelligent
-          <span class="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+          <span class="bg-gradient-to-r from-awabot-orange to-awabot-yellow bg-clip-text text-transparent">
             au service de l'humain
           </span>
         </h1>
@@ -34,7 +34,7 @@
         <div class="flex items-center justify-center gap-4">
           <NuxtLink
             to="/cdc"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-awabot-orange hover:bg-awabot-orange/90 text-white font-semibold text-sm transition-all shadow-lg shadow-awabot-orange/25 hover:shadow-awabot-orange/40"
           >
             Voir le cahier des charges →
           </NuxtLink>
@@ -51,8 +51,8 @@
         </p>
 
         <div class="grid md:grid-cols-3 gap-8">
-          <div class="group p-8 rounded-2xl border border-slate-200 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300">
-            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+          <div class="group p-8 rounded-2xl border border-slate-200 hover:border-awabot-orange/30 hover:shadow-lg hover:shadow-awabot-orange/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-orange-50 text-awabot-orange flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
               🤖
             </div>
             <h3 class="text-lg font-bold text-slate-900 mb-2">Robotique sociale</h3>
@@ -61,8 +61,8 @@
             </p>
           </div>
 
-          <div class="group p-8 rounded-2xl border border-slate-200 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-50 transition-all duration-300">
-            <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-500 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+          <div class="group p-8 rounded-2xl border border-slate-200 hover:border-awabot-yellow/30 hover:shadow-lg hover:shadow-awabot-yellow/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-awabot-yellow flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
               🧠
             </div>
             <h3 class="text-lg font-bold text-slate-900 mb-2">Intelligence artificielle</h3>
@@ -71,8 +71,8 @@
             </p>
           </div>
 
-          <div class="group p-8 rounded-2xl border border-slate-200 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50 transition-all duration-300">
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+          <div class="group p-8 rounded-2xl border border-slate-200 hover:border-awabot-orange/30 hover:shadow-lg hover:shadow-awabot-orange/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-orange-50 text-awabot-orange flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
               💬
             </div>
             <h3 class="text-lg font-bold text-slate-900 mb-2">Interaction vocale</h3>
@@ -90,7 +90,7 @@
         <div class="text-sm text-slate-400">
           © {{ new Date().getFullYear() }} Awabot — Tous droits réservés
         </div>
-        <NuxtLink to="/cdc" class="text-sm text-slate-400 hover:text-blue-500 transition-colors">
+        <NuxtLink to="/cdc" class="text-sm text-slate-400 hover:text-awabot-orange transition-colors">
           Cahier des charges
         </NuxtLink>
       </div>

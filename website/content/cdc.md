@@ -1,4 +1,8 @@
-# Cahier des Charges
+<div style="padding: 40px 0; text-align: center;">
+  <img src="/logo_baseline.svg" alt="Awabot Logo" style="max-height: 80px; margin: 0 auto;" />
+</div>
+
+# Cahier des charges — Projet Awabot Nuxt.js
 
 ## 1. Contexte et objectifs
 
@@ -86,7 +90,7 @@ graph TD
 ### 3.2 Langages / blocs / API / plugins envisagés
 
 **Frontend & Framework Applicatif :**
-*   **Framework Principal :** **Nuxt.js** (Vue 3). Choisi pour sa robustesse, sa modularité et son expérience développeur (DX) optimale.
+*   **Framework Principal :** **Nuxt.js** (Vue 3). Choisi pour sa robustesse, sa modularité et son expérience développeur (DX) optimale. Ce choix se fait également en contraste avec **Next.js** (React), qui, malgré sa popularité, présente un historique récurrent de **vulnérabilités de sécurité critiques** (CVE) affectant les mécanismes de middleware, d'authentification et de Server Actions. Ces failles, souvent classées sévères, imposent des mises à jour d'urgence fréquentes et un risque opérationnel non négligeable pour une plateforme en production. Nuxt.js offre un écosystème plus stable et une surface d'attaque réduite.
 *   **Rendering :** SPA (Single Page Application) ou SSR (Server Side Rendering) selon les besoins de SEO pour la partie publique.
 *   **State Management :** Pinia.
 *   **Design System :** TailwindCSS (pour une intégration rapide et sur-mesure) + Headless UI.
@@ -96,6 +100,66 @@ graph TD
 *   **Framework :** **Django** (Python). Conservation du backend existant pour la logique métier et la base de données.
 *   **API :** Ajout de **Django Rest Framework (DRF)** pour exposer une API REST moderne consommable par le frontend Nuxt.js.
 *   **Signaling/Temps Réel :** Serveur de signalisation existant (WebRTC via serveur relais) conservé en parallèle.
+
+### 3.3 Solution de transcription vocale (ASR)
+
+Pour la brique de transcription temps réel (Speech-to-Text), nous recommandons l'utilisation du modèle **Voxtral Mini 4B Realtime** de Mistral AI.
+
+**Pourquoi Voxtral Mini 4B Realtime :**
+
+*   **Open-source (Apache 2.0)** : Déployable sur nos propres serveurs, sans dépendance à un service cloud tiers. Cela garantit la souveraineté des données audio des visiteurs.
+*   **Streaming natif** : Architecture à attention causale conçue pour la transcription en temps réel, avec une latence configurable à partir de 80ms.
+*   **Performances multilingues** : Supporte 13 langues incluant le français et l'anglais, avec un Word Error Rate (WER) parmi les meilleurs de sa catégorie sur le benchmark FLEURS.
+*   **Taille raisonnable (4B paramètres)** : Exécutable sur un seul GPU 16 Go (ex : NVIDIA T4 ou L4), compatible avec une infrastructure cloud standard.
+
+> **Lien modèle :** [mistralai/Voxtral-Mini-4B-Realtime-2602 sur HuggingFace](https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602)
+
+**Benchmark — Word Error Rate sur FLEURS :**
+
+- Voxtral Mini 4B Realtime : ![Voxtral Benchmark — Word Error Rate sur FLEURS](/voxtral_benchmark.png)
+
+**Stratégie de déploiement :**
+
+Le modèle Voxtral Mini 4B est exécutable directement en **Python** via le framework d'inférence [vLLM](https://github.com/vllm-project/vllm), ce qui permet une intégration native dans l'écosystème applicatif existant (backend Django/Python). Nous recommandons particulièrement **vLLM** car il s'agit d'un projet **très activement maintenu** (mises à jour fréquentes, large communauté de contributeurs, support rapide des nouveaux modèles), garantissant une compatibilité durable et un accès aux dernières optimisations de performance (PagedAttention, batching continu, quantification).
+
+Bien que Mistral AI mette à disposition une **API cloud** pour la transcription, nous recommandons de déployer et d'opérer notre propre instance du modèle pour les raisons suivantes :
+
+*   **Indépendance opérationnelle** : Aucune dépendance vis-à-vis d'un service tiers. En cas de maintenance, de changement tarifaire ou de discontinuation du service Mistral, notre infrastructure de transcription reste pleinement fonctionnelle.
+*   **Garantie de disponibilité (SLA)** : Un hébergement maîtrisé permet de garantir un uptime adapté aux exigences de la plateforme, sans être soumis aux éventuels downtimes d'un fournisseur externe.
+*   **Souveraineté des données** : Les flux audio des visiteurs ne transitent jamais par un serveur tiers, conformément aux exigences RGPD et de confidentialité du projet.
+*   **Latence optimale** : Le modèle étant co-hébergé avec le reste de l'infrastructure, la latence réseau est minimisée par rapport à un appel API distant.
+
+### 3.4 Comparatif Benchmarks (Qwen3-ASR vs Autres)
+
+En complément de Voxtral, nous avons évalué les performances d'autres modèles de pointe, notamment la série **Qwen3-ASR**. Ces modèles offrent une alternative solide avec une efficacité remarquable.
+
+**Tableau comparatif des performances (WER - Word Error Rate) :**
+
+| Dataset | Metric | GPT-4o | Gemini-Pro | Doubao | Whisper-v3 | Qwen3-0.6B | Qwen3-1.7B |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **English (en)** | | | | | | | |
+| Librispeech | clean | 1.39 | 2.89 | 2.78 | 1.51 | 2.11 | **1.63** |
+| | other | 3.75 | 3.56 | 5.70 | 3.97 | 4.55 | **3.38** |
+| GigaSpeech | WER | 25.50 | 9.37 | 9.55 | 9.76 | 8.88 | **8.45** |
+| CV-en | WER | 9.08 | 14.49 | 13.78 | 9.90 | 9.92 | **7.39** |
+| Fleurs-en | WER | 2.40 | 2.94 | 6.31 | 4.08 | 4.39 | **3.35** |
+| **Chinese (zh)** | | | | | | | |
+| AISHELL-2 | WER | 4.24 | 11.62 | 2.85 | 5.06 | 3.15 | **2.71** |
+| Fleurs-zh | WER | 2.44 | 2.71 | 2.69 | 4.09 | 2.88 | **2.41** |
+
+**Graphique comparatif — Fleurs-en (WER) :**
+*(Le score le plus bas est le meilleur)*
+
+```mermaid
+xychart-beta
+    title "Word Error Rate (WER) sur Fleurs-en"
+    x-axis ["GPT-4o", "Gemini-Pro", "Whisper-v3", "Qwen3-0.6B", "Qwen3-1.7B"]
+    y-axis "WER (%)" 0 --> 6
+    bar [2.40, 2.94, 4.08, 4.39, 3.35]
+```
+
+L'utilisation de **Qwen3-ASR (1.7B)** est une option sérieuse si l'on recherche un compromis optimal entre vitesse d'inférence et précision, particulièrement sur les datasets longs ou complexes.
+
 
 ## 4. Conception UI et logique d'intégration
 
@@ -155,14 +219,18 @@ L'interface doit marquer une rupture avec l'austérité des interfaces industrie
 ### 6.2 Coordination et responsabilités
 
 [Définir la hiérarchie des intervenants, les processus de validation et le lead du projet.]
+Quels referents pour quel partie, les différentes équipes et qui valident quoi.
+Le client (Awabot valide)
 
 ## 7. Collaboration client
 
 [Modalités de collaboration avec le client (réunions, outils de suivi, validations).]
+- Réunions hebdomadaires
 
 ## 8. Digital communication / logique d’acquisition et intégration web
 
 [Stratégie d'acquisition, SEO, intégration avec les outils marketing, si applicable.]
+SEO pour la landing avec Umami.
 
 ## 9. Conclusion
 
