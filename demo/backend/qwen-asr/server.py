@@ -121,5 +121,7 @@ async def ws_qwen_asr(ws: WebSocket):
 
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.set_start_method("spawn", force=True)
     import uvicorn
     uvicorn.run("server:app", host="0.0.0.0", port=PORT, reload=True, reload_excludes=["*.log", "*.txt"])

@@ -3,6 +3,12 @@
  */
 import { ref, onUnmounted } from 'vue'
 
+declare global {
+    interface Window {
+        _audioBuffer: Float32Array;
+    }
+}
+
 export function useAudioCapture(wsUrl: string) {
     const status = ref<'idle' | 'connecting' | 'connected' | 'ready' | 'error'>('idle')
     const isRecording = ref(false)
@@ -102,10 +108,36 @@ export function useAudioCapture(wsUrl: string) {
                 }
                 audioLevel.value = levels
 
-                // Send audio
-                const pcm = floatTo16BitPCM(resample(data, audioContext!.sampleRate, 16000))
-                ws.send(JSON.stringify({ type: 'audio', data: toBase64(pcm.buffer as ArrayBuffer) }))
+                // Process audio for ASR
+                // 1. Resample to 16kHz
+                const resampled = resample(data, audioContext!.sampleRate, 16000)
+
+                // 2. Buffer until we have 1 second (16000 samples)
+                // We need a persistent buffer, so we'll add it to component state or closer scope
+                // For now, let's use a module-level or closure-level buffer strategy.
+                // Since this function is inside `start`, we can use a closure variable.
+                // BUT `resample` returns Float32. We need to accumulate Float32 then convert to PCM16.
+
+                // Let's implement accumulation:
+                if (!window._audioBuffer) window._audioBuffer = new Float32Array(0)
+
+                const newBuffer = new Float32Array(window._audioBuffer.length + resampled.length)
+                newBuffer.set(window._audioBuffer)
+                newBuffer.set(resampled, window._audioBuffer.length)
+                window._audioBuffer = newBuffer
+
+                // 3. Check if we have enough data (>= 16000 samples = 1s)
+                if (window._audioBuffer.length >= 16000) {
+                    const chunkToSend = window._audioBuffer.slice(0, 16000)
+                    window._audioBuffer = window._audioBuffer.slice(16000)
+
+                    const pcm = floatTo16BitPCM(chunkToSend)
+                    ws.send(JSON.stringify({ type: 'audio', data: toBase64(pcm.buffer as ArrayBuffer) }))
+                }
             }
+
+            // Initialize buffer on start
+            window._audioBuffer = new Float32Array(0)
 
             src.connect(processor)
             processor.connect(audioContext.destination)
