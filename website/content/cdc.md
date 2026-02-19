@@ -55,29 +55,10 @@ Une stratégie de **modernisation ciblée**. Nous conservons la brique "Robot/Re
 ### 3.1 Architecture technique
 
 ```mermaid
-graph TD
-    %% Utilisateurs
-    Pilote((Pilote Distant)) -->|Accès HTTPS| WebApp["Plateforme Web Nuxt.js\n'Cockpit' & Dashboard"]
-    Staff((Centre Culturel)) -->|Gestion Flotte| WebApp
-
-    subgraph "Infrastructure Cloud"
-        WebApp -->|REST API| API["API Django + DRF"]
-        API --> DB[("PostgreSQL + Redis")]
-        Signaling["Serveur Signalisation\n(WebSockets)"]
-        Turn[Serveur TURN/STUN]
-    end
-
-    subgraph "Site Touristique"
-        Robot["Robot Awabot\n(C++ Legacy Service)"]
-    end
-
-    %% Communication Temps Réel (WebRTC)
-    WebApp -.->|Négociation SDP| Signaling
-    Robot -.->|Enregistrement| Signaling
-    
-    %% Flux Vidéo & Data
-    Robot <==>|Flux Vidéo & Data Channel| Turn
-    Turn <==>|Flux Vidéo & Commandes| WebApp
+graph LR
+    Pilote((Pilote Distant)) <-->|WebRTC| Django["Backend Django\n(Serveur Relais)"]
+    Django <-->|WebRTC| Robot["Robot Awabot\n(Service C++)"]
+    Django --- DB[("Base de données SQL")]
 ```
 
 *   **Robot (Inchangé) :** Service embarqué existant. Continue de communiquer en WebRTC (Audio/Vidéo + Data Channels) avec l'infrastructure actuelle.
@@ -150,13 +131,18 @@ En complément de Voxtral, nous avons évalué les performances d'autres modèle
 **Graphique comparatif — Fleurs-en (WER) :**
 *(Le score le plus bas est le meilleur)*
 
+**Comparatif Final — Voxtral vs Qwen3 (WER) :**
+
 ```mermaid
 xychart-beta
-    title "Word Error Rate (WER) sur Fleurs-en"
-    x-axis ["Qwen3-0.6B", "Qwen3-1.7B"]
-    y-axis "WER (%)" 0 --> 6
-    bar [4.39, 3.35]
+    title "Comparatif Performance ASR (Fleurs-en)"
+    x-axis ["Voxtral Mini", "Qwen3-0.6B", "Qwen3-1.7B"]
+    y-axis "WER (%)" 0 --> 10
+    bar [7.2, 4.39, 3.35]
 ```
+
+> [!NOTE]
+> Bien que Voxtral soit extrêmement rapide pour du temps réel pur, la série **Qwen3** montre une précision (WER) supérieure sur les tests de traduction/transcription complexes.
 
 L'utilisation de **Qwen3-ASR (1.7B)** est une option sérieuse si l'on recherche un compromis optimal entre vitesse d'inférence et précision, particulièrement sur les datasets longs ou complexes.
 
