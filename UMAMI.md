@@ -10,7 +10,7 @@
       </td>
       <td align="center" style="border: none;">
         <img src="website/public/logo_baseline.svg" width="200" alt="Awabot Logo"><br>
-        <b>Awabot Innovation</b>
+        <b>Awabot</b>
       </td>
     </tr>
   </table>
