@@ -1,14 +1,11 @@
-"""
-Voxtral ASR — Standalone FastAPI service.
-Loads and runs Voxtral Mini 4B via vLLM locally.
-"""
 import os
+os.environ["VLLM_USE_V1"] = "0"
+os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
+
 import json
 import base64
 import asyncio
 import numpy as np
-
-os.environ["VLLM_USE_V1"] = "0"
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,7 +34,12 @@ async def load_model():
         print("[VoxtralASR] vLLM not installed. Endpoint will return errors.")
         return
     print(f"[VoxtralASR] Loading {MODEL} via vLLM…")
-    llm = LLM(model=MODEL, dtype="bfloat16", trust_remote_code=True)
+    llm = LLM(
+        model=MODEL, 
+        dtype="bfloat16", 
+        trust_remote_code=True,
+        max_model_len=4096
+    )
     print("[VoxtralASR] Model loaded.")
 
 
