@@ -182,6 +182,9 @@ Pour maintenir la souveraineté et la performance, nous préconisons :
 *   **Modèles de traduction via LLM** : Utilisation de modèles compacts (ex: **MarianMT** ou familles [**Mistral 8x7B**](https://huggingface.co/mistralai/Mixtral-8x7B-v0.1)) optimisés pour la traduction.
 *   **Intégration vLLM** : Comme pour l'ASR, l'utilisation de **vLLM** est recommandée pour servir les modèles de traduction, permettant un débit élevé et une gestion efficace de la mémoire GPU.
 
+> [!TIP]
+> **Recommandation pour le MVP :** Pour une première version, nous recommandons de s'appuyer sur **LibreTranslate**. C'est la solution la plus efficace car elle est open-source, gratuite et extrêmement simple à déployer, ce qui est idéal pour une mise en œuvre rapide et souveraine.
+
 Cette boucle garantit que l'interaction reste "vivante" et naturelle, même à travers une barrière linguistique.
 
 

@@ -1,69 +1,35 @@
 import os
-os.environ["VLLM_USE_V1"] = "0" # Retired in 0.15.1? Let's check if it still works as fallback.
-# os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
-os.environ["VLLM_LOGGING_LEVEL"] = "DEBUG"
-
 import json
 import base64
 import asyncio
-import numpy as np
+from dotenv import load_dotenv
+from mistralai import Mistral
+from mistralai.models import AudioFormat, RealtimeTranscriptionError, RealtimeTranscriptionSessionCreated, TranscriptionStreamDone, TranscriptionStreamTextDelta
+from mistralai.extra.realtime import UnknownRealtimeEvent
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
-try:
-    from vllm import LLM, SamplingParams
-    VLLM_AVAILABLE = True
-except ImportError:
-    VLLM_AVAILABLE = False
+# ── Load Environment ─────────────────────────────────────────────
+load_dotenv()
 
 # ── Config ───────────────────────────────────────────────────────
-MODEL = os.getenv("VOXTRAL_MODEL", "mistralai/Voxtral-Mini-4B-Realtime-2602")
-DEVICE = os.getenv("DEVICE", "cuda:0")
+API_KEY = os.getenv("MISTRAL_API_KEY")
+MODEL = os.getenv("VOXTRAL_MODEL", "voxtral-mini-transcribe-realtime-2602")
 PORT = int(os.getenv("VOXTRAL_PORT", "8082"))
 
-app = FastAPI(title="Voxtral ASR")
+app = FastAPI(title="Voxtral ASR (API)")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
-llm = None
+if not API_KEY:
+    print("[VoxtralASR] WARNING: MISTRAL_API_KEY not found in .env")
 
-
-@app.on_event("startup")
-async def load_model():
-    global llm
-    if not VLLM_AVAILABLE:
-        print("[VoxtralASR] vLLM not installed. Endpoint will return errors.")
-        return
-    print(f"[VoxtralASR] Loading {MODEL} via vLLM…")
-    llm = LLM(
-        model=MODEL, 
-        dtype="bfloat16", 
-        trust_remote_code=True,
-        max_model_len=4096,
-        hf_overrides={"sliding_window": 4096},
-        enforce_eager=True,
-        gpu_memory_utilization=0.7
-    )
-    print("[VoxtralASR] Model loaded.")
-
+# Microphone is always pcm_s16le at 16000Hz in our frontend
+AUDIO_FORMAT = AudioFormat(encoding="pcm_s16le", sample_rate=16000)
 
 @app.get("/health")
 async def health():
-    return {"service": "voxtral-asr", "model": MODEL, "loaded": llm is not None}
-
-
-def _transcribe(audio_float: np.ndarray) -> str:
-    try:
-        params = SamplingParams(temperature=0.0, max_tokens=256)
-        outputs = llm.generate(
-            [{"prompt": "<|audio|>", "multi_modal_data": {"audio": (audio_float, 16000)}}],
-            sampling_params=params,
-        )
-        if outputs and outputs[0].outputs:
-            return outputs[0].outputs[0].text.strip()
-    except Exception as e:
-        print(f"[VoxtralASR] Error: {e}")
-    return ""
+    return {"service": "voxtral-asr", "mode": "api", "model": MODEL}
 
 
 @app.websocket("/ws/voxtral")
@@ -71,19 +37,62 @@ async def ws_voxtral(ws: WebSocket):
     await ws.accept()
     await ws.send_json({"type": "status", "message": "connected"})
 
-    if llm is None:
-        await ws.send_json({"type": "error", "message": "Model not loaded."})
+    if not API_KEY:
+        await ws.send_json({"type": "error", "message": "API Key missing."})
         return
 
+    client = Mistral(api_key=API_KEY)
+    audio_queue = asyncio.Queue()
+
+    async def mistral_streamer():
+        try:
+            full_transcript = ""
+
+            async def audio_iterator():
+                while True:
+                    chunk = await audio_queue.get()
+                    if chunk is None: break
+                    yield chunk
+
+            async for event in client.audio.realtime.transcribe_stream(
+                audio_stream=audio_iterator(),
+                model=MODEL,
+                audio_format=AUDIO_FORMAT
+            ):
+                if isinstance(event, RealtimeTranscriptionSessionCreated):
+                    print(f"[VoxtralASR] Session created: {event}")
+                    await ws.send_json({"type": "status", "message": "session_created"})
+                
+                elif isinstance(event, TranscriptionStreamTextDelta):
+                    full_transcript += event.text
+                    await ws.send_json({
+                        "type": "transcript", 
+                        "text": full_transcript,
+                        "is_final": False
+                    })
+                
+                elif isinstance(event, TranscriptionStreamDone):
+                    # Mistral Done event contains the final combined text
+                    await ws.send_json({
+                        "type": "transcript", 
+                        "text": event.text,
+                        "is_final": True
+                    })
+                    full_transcript = "" # Reset for next potential use in same connection (though we usually have 1 session)
+                
+                elif isinstance(event, RealtimeTranscriptionError):
+                    print(f"[VoxtralASR] API Error: {event.message}")
+                    await ws.send_json({"type": "error", "message": event.message})
+                
+                elif isinstance(event, UnknownRealtimeEvent):
+                    continue
+
+        except Exception as e:
+            print(f"[VoxtralASR] Mistral Stream Error: {e}")
+            await ws.send_json({"type": "error", "message": str(e)})
+
+    stream_task = asyncio.create_task(mistral_streamer())
     await ws.send_json({"type": "status", "message": "ready"})
-    audio_buffer = bytearray()
-    
-    # VAD & Incremental Buffering state
-    MAX_BUFFER_SIZE = 16000 * 2 * 30  # 30 seconds max
-    SILENCE_THRESHOLD = 0.01  # RMS threshold
-    SILENCE_DURATION_LIMIT = 0.8  # seconds
-    
-    current_silence_duration = 0.0
 
     try:
         while True:
@@ -92,53 +101,21 @@ async def ws_voxtral(ws: WebSocket):
 
             if msg.get("type") == "audio" and "data" in msg:
                 chunk_bytes = base64.b64decode(msg["data"])
-                audio_buffer.extend(chunk_bytes)
-                
-                # Check for silence in the new chunk
-                chunk_pcm = np.frombuffer(chunk_bytes, dtype=np.int16)
-                chunk_float = chunk_pcm.astype(np.float32) / 32768.0
-                rms = np.sqrt(np.mean(chunk_float**2)) if len(chunk_float) > 0 else 0
-                
-                chunk_duration = len(chunk_pcm) / 16000.0
-                if rms < SILENCE_THRESHOLD:
-                    current_silence_duration += chunk_duration
-                else:
-                    current_silence_duration = 0.0
-
-                # Process every ~0.25s of audio to keep latency low
-                if len(audio_buffer) >= 8000:
-                    pcm = np.frombuffer(bytes(audio_buffer), dtype=np.int16)
-                    # Limit window to last 7 seconds to keep latency low
-                    WINDOW_SIZE = 16000 * 7
-                    if len(pcm) > WINDOW_SIZE:
-                        pcm = pcm[-WINDOW_SIZE:]
-                        
-                    audio_float = pcm.astype(np.float32) / 32768.0
-
-                    loop = asyncio.get_event_loop()
-                    result = await loop.run_in_executor(None, _transcribe, audio_float)
-
-                    if result:
-                        await ws.send_json({
-                            "type": "transcript", 
-                            "text": result,
-                            "is_final": current_silence_duration >= SILENCE_DURATION_LIMIT
-                        })
-
-                    # If silence is long enough, we clear buffer
-                    if current_silence_duration >= SILENCE_DURATION_LIMIT:
-                        audio_buffer.clear()
-                        current_silence_duration = 0.0
-                    elif len(audio_buffer) > MAX_BUFFER_SIZE:
-                        # Fallback: keep just the end for context
-                        new_buffer = audio_buffer[-8000:]
-                        audio_buffer.clear()
-                        audio_buffer.extend(new_buffer)
+                await audio_queue.put(chunk_bytes)
 
     except WebSocketDisconnect:
         pass
+    finally:
+        await audio_queue.put(None)
+        stream_task.cancel()
+        try:
+            await stream_task
+        except asyncio.CancelledError:
+            pass
 
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("server:app", host="0.0.0.0", port=PORT, reload=True, reload_excludes=["*.log", "*.txt"])
+
+
