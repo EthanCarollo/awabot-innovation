@@ -2,7 +2,7 @@
   <img src="/logo_baseline.svg" alt="Awabot Logo" style="max-height: 80px; margin: 0 auto;" />
 </div>
 
-# Cahier des charges — Projet Awabot Nuxt.js
+# Cahier des charges — Awabot
 
 ## 1. Contexte et objectifs
 
@@ -101,9 +101,11 @@ graph TD
 *   **API :** Ajout de **Django Rest Framework (DRF)** pour exposer une API REST moderne consommable par le frontend Nuxt.js.
 *   **Signaling/Temps Réel :** Serveur de signalisation existant (WebRTC via serveur relais) conservé en parallèle.
 
-### 3.3 Solution de transcription vocale (ASR)
+### 3.3 Transcription (ASR)
 
-Pour la brique de transcription temps réel (Speech-to-Text), nous recommandons l'utilisation du modèle **Voxtral Mini 4B Realtime** de Mistral AI.
+La transcription temps réel (Speech-to-Text) constitue la **première étape critique** de notre moteur d'interaction IA. Elle transforme le flux audio capturé par le robot en texte structuré, moteur indispensable à la brique suivante : la **traduction instantanée**.
+
+Pour cette fonction, nous recommandons l'utilisation du modèle **Voxtral Mini 4B Realtime** de Mistral AI.
 
 **Pourquoi Voxtral Mini 4B Realtime :**
 
@@ -129,23 +131,21 @@ Bien que Mistral AI mette à disposition une **API cloud** pour la transcription
 *   **Souveraineté des données** : Les flux audio des visiteurs ne transitent jamais par un serveur tiers, conformément aux exigences RGPD et de confidentialité du projet.
 *   **Latence optimale** : Le modèle étant co-hébergé avec le reste de l'infrastructure, la latence réseau est minimisée par rapport à un appel API distant.
 
-### 3.4 Comparatif Benchmarks (Qwen3-ASR vs Autres)
+### 3.4 Benchmarks ASR
 
 En complément de Voxtral, nous avons évalué les performances d'autres modèles de pointe, notamment la série **Qwen3-ASR**. Ces modèles offrent une alternative solide avec une efficacité remarquable.
 
 **Tableau comparatif des performances (WER - Word Error Rate) :**
 
-| Dataset | Metric | GPT-4o | Gemini-Pro | Doubao | Whisper-v3 | Qwen3-0.6B | Qwen3-1.7B |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **English (en)** | | | | | | | |
-| Librispeech | clean | 1.39 | 2.89 | 2.78 | 1.51 | 2.11 | **1.63** |
-| | other | 3.75 | 3.56 | 5.70 | 3.97 | 4.55 | **3.38** |
-| GigaSpeech | WER | 25.50 | 9.37 | 9.55 | 9.76 | 8.88 | **8.45** |
-| CV-en | WER | 9.08 | 14.49 | 13.78 | 9.90 | 9.92 | **7.39** |
-| Fleurs-en | WER | 2.40 | 2.94 | 6.31 | 4.08 | 4.39 | **3.35** |
-| **Chinese (zh)** | | | | | | | |
-| AISHELL-2 | WER | 4.24 | 11.62 | 2.85 | 5.06 | 3.15 | **2.71** |
-| Fleurs-zh | WER | 2.44 | 2.71 | 2.69 | 4.09 | 2.88 | **2.41** |
+| Dataset | Metric | Qwen3-0.6B | Qwen3-1.7B |
+| :--- | :--- | :---: | :---: |
+| **English (en)** | | | |
+| GigaSpeech | WER | 8.88 | **8.45** |
+| CV-en | WER | 9.92 | **7.39** |
+| Fleurs-en | WER | 4.39 | **3.35** |
+| **Chinese (zh)** | | | |
+| AISHELL-2 | WER | 3.15 | **2.71** |
+| Fleurs-zh | WER | 2.88 | **2.41** |
 
 **Graphique comparatif — Fleurs-en (WER) :**
 *(Le score le plus bas est le meilleur)*
@@ -153,12 +153,38 @@ En complément de Voxtral, nous avons évalué les performances d'autres modèle
 ```mermaid
 xychart-beta
     title "Word Error Rate (WER) sur Fleurs-en"
-    x-axis ["GPT-4o", "Gemini-Pro", "Whisper-v3", "Qwen3-0.6B", "Qwen3-1.7B"]
+    x-axis ["Qwen3-0.6B", "Qwen3-1.7B"]
     y-axis "WER (%)" 0 --> 6
-    bar [2.40, 2.94, 4.08, 4.39, 3.35]
+    bar [4.39, 3.35]
 ```
 
 L'utilisation de **Qwen3-ASR (1.7B)** est une option sérieuse si l'on recherche un compromis optimal entre vitesse d'inférence et précision, particulièrement sur les datasets longs ou complexes.
+
+### 3.5 Traduction
+
+Une fois la parole capturée et transcrite avec une faible latence par la brique ASR, le système entre dans sa phase de **traduction**. L'objectif est de permettre un échange fluide entre un visiteur et un guide s'exprimant dans des langues différentes.
+
+**Avantage décisif des LLM :**
+L'usage de modèles de langage (LLM) pour la traduction offre une opportunité de **correction contextuelle**. Un LLM ne se contente pas de traduire mot-à-mot ; il est capable de :
+*   **Réparer les erreurs d'ASR** : Si un mot est mal transcrit phonétiquement mais que le sens reste déductible, le LLM peut reconstruire la phrase correcte avant la traduction.
+*   **Ajuster le ton** : Garantir que la traduction respecte le contexte culturel du lieu visité.
+
+**La Boucle de Transcription & Traduction :**
+Le flux de données suit un cycle itératif conçu pour minimiser la latence perçue :
+1.  **Capture Audio** : Le robot transmet le flux audio au serveur d'inférence.
+2.  **Transcription (ASR)** : Le texte est généré en temps réel par Voxtral ou Qwen3.
+3.  **Traduction (NMT)** : Le texte transcrit est immédiatement envoyé à un modèle de traduction (Neural Machine Translation) pour être affiché dans la langue cible du visiteur.
+4.  **Affichage/Synthèse** : Le visiteur reçoit le texte traduit sur son cockpit, permettant une compréhension immédiate.
+
+**Solutions de traduction envisagées :**
+Pour maintenir la souveraineté et la performance, nous préconisons :
+*   **HY-MT (Tencent)** : Modèle de pointe offrant une qualité de traduction exceptionnelle pour le multilingue.
+*   **Gemma Translate** : Basé sur l'architecture Google Gemma, très performant pour les paires de langues courantes (FR/EN).
+*   **LibreTranslate** : Solution open-source auto-hébergée robuste pour une indépendance totale et des coûts serveurs maîtrisés.
+*   **Modèles de traduction via LLM** : Utilisation de modèles compacts (ex: **MarianMT** ou familles **Mistral 7B/8x7B**) optimisés pour la traduction.
+*   **Intégration vLLM** : Comme pour l'ASR, l'utilisation de **vLLM** est recommandée pour servir les modèles de traduction, permettant un débit élevé et une gestion efficace de la mémoire GPU.
+
+Cette boucle garantit que l'interaction reste "vivante" et naturelle, même à travers une barrière linguistique.
 
 
 ## 4. Conception UI et logique d'intégration
@@ -227,10 +253,13 @@ Le client (Awabot valide)
 [Modalités de collaboration avec le client (réunions, outils de suivi, validations).]
 - Réunions hebdomadaires
 
-## 8. Digital communication / logique d’acquisition et intégration web
+## 8. Communication et SEO
 
-[Stratégie d'acquisition, SEO, intégration avec les outils marketing, si applicable.]
-SEO pour la landing avec Umami.
+**Optimisation et Trafic :**
+*   **SEO Technique** : La structure Nuxt.js permet une indexation optimale via le Server-Side Rendering (SSR). Les meta-balises et le sitemap seront gérés nativement pour maximiser la visibilité sur Google.
+*   **Analytics (Umami)** : Plutôt que Google Analytics, nous privilégions [**Umami**](https://umami.is/) pour un tracking respectueux de la vie privée (sans cookies, conforme RGPD).
+    *   **Intégration native** : Nuxt s'interface parfaitement avec Umami via le module officiel [`nuxt-umami`](https://nuxt.com/modules/umami).
+    *   **Avantages** : Légèreté du script, interface simple et souveraineté des données (possibilité d'auto-hébergement). Le tracking permet de suivre précisément le parcours utilisateur (Landing -> Cockpit) sans compromettre la performance.
 
 ## 9. Conclusion
 
