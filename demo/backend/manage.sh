@@ -14,6 +14,17 @@ VOXTRAL_PORT=8082
 QWEN_ASR_PORT=8083
 QWEN_TTS_PORT=8084
 
+kill_services() {
+    echo "Cleaning up existing services on ports $VOXTRAL_PORT, $QWEN_ASR_PORT, $QWEN_TTS_PORT..."
+    for port in $VOXTRAL_PORT $QWEN_ASR_PORT $QWEN_TTS_PORT; do
+        pid=$(lsof -t -i:"$port" || true)
+        if [ -n "$pid" ]; then
+            echo "Killing process(es) on port $port: $pid"
+            kill -9 $pid
+        fi
+    done
+}
+
 # Service Setup Function
 setup_and_run() {
     local service_name=$1
@@ -50,15 +61,40 @@ setup_and_run() {
 # Main Execution
 cd "$(dirname "$0")"
 
-# Kill existing services if they are running on these ports
-echo "Cleaning up existing services on ports $VOXTRAL_PORT, $QWEN_ASR_PORT, $QWEN_TTS_PORT..."
+# Check for stop command
+if [ "$1" == "stop" ]; then
+    kill_services
+    echo "All services stopped."
+    exit 0
+fi
+
+# Check if services are already running
+RUNNING=false
 for port in $VOXTRAL_PORT $QWEN_ASR_PORT $QWEN_TTS_PORT; do
-    pid=$(lsof -t -i:"$port" || true)
-    if [ -n "$pid" ]; then
-        echo "Killing process $pid on port $port"
-        kill -9 "$pid"
+    if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null ; then
+        RUNNING=true
+        break
     fi
 done
+
+if [ "$RUNNING" = true ]; then
+    echo "⚠️  Some services are already running on ports $VOXTRAL_PORT, $QWEN_ASR_PORT, or $QWEN_TTS_PORT."
+    read -p "Do you want to stop them and restart? (y/n/stop): " choice
+    case "$choice" in 
+      y|Y ) 
+        kill_services
+        ;;
+      stop|STOP )
+        kill_services
+        echo "Services stopped."
+        exit 0
+        ;;
+      * ) 
+        echo "Aborting startup to avoid port conflicts."
+        exit 1
+        ;;
+    esac
+fi
 
 # Setup each service
 setup_and_run "Voxtral ASR" "awabot-voxtral" "voxtral-asr" "$VOXTRAL_PORT"

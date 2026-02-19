@@ -1,136 +1,90 @@
-INFO:     Started server process [156364]
+INFO:     Started server process [162111]
 INFO:     Waiting for application startup.
 [VoxtralASR] Loading mistralai/Voxtral-Mini-4B-Realtime-2602 via vLLM…
-INFO 02-19 17:30:00 [utils.py:261] non-default args: {'dtype': 'bfloat16', 'max_model_len': 4096, 'disable_log_stats': True, 'model': 'mistralai/Voxtral-Mini-4B-Realtime-2602'}
-WARNING 02-19 17:30:01 [config.py:1154] The params.json file is missing 'max_position_embeddings' and could not get a value from the HF config. Defaulting to 128000
-WARNING 02-19 17:30:01 [config.py:1154] Traceback (most recent call last):
-WARNING 02-19 17:30:01 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1360, in from_pretrained
-WARNING 02-19 17:30:01 [config.py:1154]     config_class = CONFIG_MAPPING[config_dict["model_type"]]
-WARNING 02-19 17:30:01 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1048, in __getitem__
-WARNING 02-19 17:30:01 [config.py:1154]     raise KeyError(key)
-WARNING 02-19 17:30:01 [config.py:1154] KeyError: 'voxtral_realtime'
-WARNING 02-19 17:30:01 [config.py:1154] 
-WARNING 02-19 17:30:01 [config.py:1154] During handling of the above exception, another exception occurred:
-WARNING 02-19 17:30:01 [config.py:1154] 
-WARNING 02-19 17:30:01 [config.py:1154] Traceback (most recent call last):
-WARNING 02-19 17:30:01 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/transformers_utils/config.py", line 1145, in _maybe_retrieve_max_pos_from_hf
-WARNING 02-19 17:30:01 [config.py:1154]     hf_config = get_config(
-WARNING 02-19 17:30:01 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/transformers_utils/config.py", line 630, in get_config
-WARNING 02-19 17:30:01 [config.py:1154]     config_dict, config = config_parser.parse(
-WARNING 02-19 17:30:01 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/transformers_utils/config.py", line 187, in parse
-WARNING 02-19 17:30:01 [config.py:1154]     raise e
-WARNING 02-19 17:30:01 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/transformers_utils/config.py", line 166, in parse
-WARNING 02-19 17:30:01 [config.py:1154]     config = AutoConfig.from_pretrained(
-WARNING 02-19 17:30:01 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1362, in from_pretrained
-WARNING 02-19 17:30:01 [config.py:1154]     raise ValueError(
-WARNING 02-19 17:30:01 [config.py:1154] ValueError: The checkpoint you are trying to load has model type `voxtral_realtime` but Transformers does not recognize this architecture. This could be because of an issue with the checkpoint, or because your version of Transformers is out of date.
-WARNING 02-19 17:30:01 [config.py:1154] 
-WARNING 02-19 17:30:01 [config.py:1154] You can update Transformers with the command `pip install --upgrade transformers`. If this does not work, and the checkpoint is very new, then there may not be a release version that supports this model yet. In this case, you can get the most up-to-date code by installing Transformers from source with the command `pip install git+https://github.com/huggingface/transformers.git`
-INFO 02-19 17:30:10 [model.py:541] Resolved architecture: VoxtralStreamingGeneration
-INFO 02-19 17:30:10 [model.py:1561] Using max model len 4096
-INFO 02-19 17:30:11 [scheduler.py:226] Chunked prefill is enabled with max_num_batched_tokens=8192.
-INFO 02-19 17:30:11 [vllm.py:624] Asynchronous scheduling is enabled.
-[2026-02-19 17:30:13] INFO tekken.py:195: Non special vocabulary size is 130072 with 1000 special tokens.
-[2026-02-19 17:30:13] INFO tekken.py:572: Cutting non special vocabulary to first 130072 tokens.
-[2026-02-19 17:30:15] INFO tekken.py:195: Non special vocabulary size is 130072 with 1000 special tokens.
-[2026-02-19 17:30:15] INFO tekken.py:572: Cutting non special vocabulary to first 130072 tokens.
-WARNING 02-19 17:30:16 [system_utils.py:140] We must use the `spawn` multiprocessing start method. Overriding VLLM_WORKER_MULTIPROC_METHOD to 'spawn'. See https://docs.vllm.ai/en/latest/usage/troubleshooting.html#python-multiprocessing for more information. Reasons: CUDA is initialized
-[0;36m(EngineCore_DP0 pid=156772)[0;0m INFO 02-19 17:30:21 [core.py:96] Initializing a V1 LLM engine (v0.15.1) with config: model='mistralai/Voxtral-Mini-4B-Realtime-2602', speculative_config=None, tokenizer='mistralai/Voxtral-Mini-4B-Realtime-2602', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False), seed=0, served_model_name=mistralai/Voxtral-Mini-4B-Realtime-2602, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'level': None, 'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'splitting_ops': ['vllm::unified_attention', 'vllm::unified_attention_with_output', 'vllm::unified_mla_attention', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::plamo2_mamba_mixer', 'vllm::gdn_attention_core', 'vllm::kda_attention', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::unified_kv_cache_update'], 'compile_mm_encoder': False, 'compile_sizes': [], 'compile_ranges_split_points': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'eliminate_noops': True, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': True}, 'local_cache_dir': None, 'static_all_moe_layers': []}
-[0;36m(EngineCore_DP0 pid=156772)[0;0m [2026-02-19 17:30:23] INFO tekken.py:195: Non special vocabulary size is 130072 with 1000 special tokens.
-[0;36m(EngineCore_DP0 pid=156772)[0;0m [2026-02-19 17:30:23] INFO tekken.py:572: Cutting non special vocabulary to first 130072 tokens.
-[0;36m(EngineCore_DP0 pid=156772)[0;0m INFO 02-19 17:30:24 [parallel_state.py:1212] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://172.28.55.52:60105 backend=nccl
-[0;36m(EngineCore_DP0 pid=156772)[0;0m INFO 02-19 17:30:24 [parallel_state.py:1423] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A
-[0;36m(EngineCore_DP0 pid=156772)[0;0m INFO 02-19 17:30:25 [gpu_model_runner.py:4033] Starting to load model mistralai/Voxtral-Mini-4B-Realtime-2602...
-[0;36m(EngineCore_DP0 pid=156772)[0;0m INFO 02-19 17:30:25 [vllm.py:624] Asynchronous scheduling is enabled.
-[0;36m(EngineCore_DP0 pid=156772)[0;0m /home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/tvm_ffi/_optional_torch_c_dlpack.py:174: UserWarning: Failed to JIT torch c dlpack extension, EnvTensorAllocator will not be enabled.
-[0;36m(EngineCore_DP0 pid=156772)[0;0m We recommend installing via `pip install torch-c-dlpack-ext`
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   warnings.warn(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m INFO 02-19 17:30:27 [cuda.py:364] Using FLASH_ATTN attention backend out of potential backends: ('FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION')
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946] EngineCore failed to start.
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946] Traceback (most recent call last):
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 937, in run_engine_core
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 691, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     super().__init__(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 105, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self.model_executor = executor_class(vllm_config)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/executor/abstract.py", line 101, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self._init_executor()
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/executor/uniproc_executor.py", line 48, in _init_executor
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self.driver_worker.load_model()
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/gpu_worker.py", line 275, in load_model
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self.model_runner.load_model(eep_scale_up=eep_scale_up)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/gpu_model_runner.py", line 4052, in load_model
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self.model = model_loader.load_model(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/model_loader/base_loader.py", line 50, in load_model
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     model = initialize_model(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/model_loader/utils.py", line 48, in initialize_model
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     return model_class(vllm_config=vllm_config, prefix=prefix)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/voxtral_streaming.py", line 136, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     super().__init__(vllm_config=vllm_config, prefix=prefix)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/voxtral.py", line 381, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self.whisper_encoder = VoxtralEncoderModel(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/voxtral.py", line 767, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self.whisper_encoder = WhisperEncoderCls(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/whisper_causal.py", line 433, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self.start_layer, self.end_layer, self.layers = make_layers(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/utils.py", line 706, in make_layers
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     + [
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/utils.py", line 707, in <listcomp>
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     maybe_offload_to_cpu(layer_fn(prefix=f"{prefix}.{idx}"))
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/whisper_causal.py", line 435, in <lambda>
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     lambda prefix: WhisperCausalEncoderLayer(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/whisper_causal.py", line 375, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     self.self_attn = WhisperCausalAttention(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/whisper_causal.py", line 314, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946]     assert per_layer_sliding_window is not None, (
-[0;36m(EngineCore_DP0 pid=156772)[0;0m ERROR 02-19 17:30:28 [core.py:946] AssertionError: rope can only used in combination with a sliding window
-[0;36m(EngineCore_DP0 pid=156772)[0;0m Process EngineCore_DP0:
-[0;36m(EngineCore_DP0 pid=156772)[0;0m Traceback (most recent call last):
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.run()
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/multiprocessing/process.py", line 108, in run
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self._target(*self._args, **self._kwargs)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 950, in run_engine_core
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     raise e
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 937, in run_engine_core
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 691, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     super().__init__(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 105, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.model_executor = executor_class(vllm_config)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/executor/abstract.py", line 101, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self._init_executor()
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/executor/uniproc_executor.py", line 48, in _init_executor
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.driver_worker.load_model()
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/gpu_worker.py", line 275, in load_model
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.model_runner.load_model(eep_scale_up=eep_scale_up)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/gpu_model_runner.py", line 4052, in load_model
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.model = model_loader.load_model(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/model_loader/base_loader.py", line 50, in load_model
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     model = initialize_model(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/model_loader/utils.py", line 48, in initialize_model
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     return model_class(vllm_config=vllm_config, prefix=prefix)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/voxtral_streaming.py", line 136, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     super().__init__(vllm_config=vllm_config, prefix=prefix)
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/voxtral.py", line 381, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.whisper_encoder = VoxtralEncoderModel(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/voxtral.py", line 767, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.whisper_encoder = WhisperEncoderCls(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/whisper_causal.py", line 433, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.start_layer, self.end_layer, self.layers = make_layers(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/utils.py", line 706, in make_layers
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     + [
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/utils.py", line 707, in <listcomp>
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     maybe_offload_to_cpu(layer_fn(prefix=f"{prefix}.{idx}"))
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/whisper_causal.py", line 435, in <lambda>
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     lambda prefix: WhisperCausalEncoderLayer(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/whisper_causal.py", line 375, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     self.self_attn = WhisperCausalAttention(
-[0;36m(EngineCore_DP0 pid=156772)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/model_executor/models/whisper_causal.py", line 314, in __init__
-[0;36m(EngineCore_DP0 pid=156772)[0;0m     assert per_layer_sliding_window is not None, (
-[0;36m(EngineCore_DP0 pid=156772)[0;0m AssertionError: rope can only used in combination with a sliding window
-[rank0]:[W219 17:30:28.020609422 ProcessGroupNCCL.cpp:1524] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+INFO 02-19 17:53:14 [utils.py:261] non-default args: {'dtype': 'bfloat16', 'max_model_len': 4096, 'disable_log_stats': True, 'model': 'mistralai/Voxtral-Mini-4B-Realtime-2602'}
+WARNING 02-19 17:53:15 [config.py:1154] The params.json file is missing 'max_position_embeddings' and could not get a value from the HF config. Defaulting to 128000
+WARNING 02-19 17:53:15 [config.py:1154] Traceback (most recent call last):
+WARNING 02-19 17:53:15 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1360, in from_pretrained
+WARNING 02-19 17:53:15 [config.py:1154]     config_class = CONFIG_MAPPING[config_dict["model_type"]]
+WARNING 02-19 17:53:15 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1048, in __getitem__
+WARNING 02-19 17:53:15 [config.py:1154]     raise KeyError(key)
+WARNING 02-19 17:53:15 [config.py:1154] KeyError: 'voxtral_realtime'
+WARNING 02-19 17:53:15 [config.py:1154] 
+WARNING 02-19 17:53:15 [config.py:1154] During handling of the above exception, another exception occurred:
+WARNING 02-19 17:53:15 [config.py:1154] 
+WARNING 02-19 17:53:15 [config.py:1154] Traceback (most recent call last):
+WARNING 02-19 17:53:15 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/transformers_utils/config.py", line 1145, in _maybe_retrieve_max_pos_from_hf
+WARNING 02-19 17:53:15 [config.py:1154]     hf_config = get_config(
+WARNING 02-19 17:53:15 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/transformers_utils/config.py", line 630, in get_config
+WARNING 02-19 17:53:15 [config.py:1154]     config_dict, config = config_parser.parse(
+WARNING 02-19 17:53:15 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/transformers_utils/config.py", line 187, in parse
+WARNING 02-19 17:53:15 [config.py:1154]     raise e
+WARNING 02-19 17:53:15 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/transformers_utils/config.py", line 166, in parse
+WARNING 02-19 17:53:15 [config.py:1154]     config = AutoConfig.from_pretrained(
+WARNING 02-19 17:53:15 [config.py:1154]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1362, in from_pretrained
+WARNING 02-19 17:53:15 [config.py:1154]     raise ValueError(
+WARNING 02-19 17:53:15 [config.py:1154] ValueError: The checkpoint you are trying to load has model type `voxtral_realtime` but Transformers does not recognize this architecture. This could be because of an issue with the checkpoint, or because your version of Transformers is out of date.
+WARNING 02-19 17:53:15 [config.py:1154] 
+WARNING 02-19 17:53:15 [config.py:1154] You can update Transformers with the command `pip install --upgrade transformers`. If this does not work, and the checkpoint is very new, then there may not be a release version that supports this model yet. In this case, you can get the most up-to-date code by installing Transformers from source with the command `pip install git+https://github.com/huggingface/transformers.git`
+INFO 02-19 17:53:15 [model.py:541] Resolved architecture: VoxtralStreamingGeneration
+INFO 02-19 17:53:15 [model.py:1561] Using max model len 4096
+INFO 02-19 17:53:15 [scheduler.py:226] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 02-19 17:53:15 [vllm.py:624] Asynchronous scheduling is enabled.
+[2026-02-19 17:53:18] INFO tekken.py:195: Non special vocabulary size is 130072 with 1000 special tokens.
+[2026-02-19 17:53:18] INFO tekken.py:572: Cutting non special vocabulary to first 130072 tokens.
+[2026-02-19 17:53:20] INFO tekken.py:195: Non special vocabulary size is 130072 with 1000 special tokens.
+[2026-02-19 17:53:20] INFO tekken.py:572: Cutting non special vocabulary to first 130072 tokens.
+WARNING 02-19 17:53:21 [system_utils.py:140] We must use the `spawn` multiprocessing start method. Overriding VLLM_WORKER_MULTIPROC_METHOD to 'spawn'. See https://docs.vllm.ai/en/latest/usage/troubleshooting.html#python-multiprocessing for more information. Reasons: CUDA is initialized
+[0;36m(EngineCore_DP0 pid=162522)[0;0m INFO 02-19 17:53:27 [core.py:96] Initializing a V1 LLM engine (v0.15.1) with config: model='mistralai/Voxtral-Mini-4B-Realtime-2602', speculative_config=None, tokenizer='mistralai/Voxtral-Mini-4B-Realtime-2602', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False), seed=0, served_model_name=mistralai/Voxtral-Mini-4B-Realtime-2602, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'level': None, 'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'splitting_ops': ['vllm::unified_attention', 'vllm::unified_attention_with_output', 'vllm::unified_mla_attention', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::plamo2_mamba_mixer', 'vllm::gdn_attention_core', 'vllm::kda_attention', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::unified_kv_cache_update'], 'compile_mm_encoder': False, 'compile_sizes': [], 'compile_ranges_split_points': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'eliminate_noops': True, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': True}, 'local_cache_dir': None, 'static_all_moe_layers': []}
+[0;36m(EngineCore_DP0 pid=162522)[0;0m [2026-02-19 17:53:30] INFO tekken.py:195: Non special vocabulary size is 130072 with 1000 special tokens.
+[0;36m(EngineCore_DP0 pid=162522)[0;0m [2026-02-19 17:53:30] INFO tekken.py:572: Cutting non special vocabulary to first 130072 tokens.
+[0;36m(EngineCore_DP0 pid=162522)[0;0m INFO 02-19 17:53:31 [parallel_state.py:1212] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://172.28.55.52:43613 backend=nccl
+[0;36m(EngineCore_DP0 pid=162522)[0;0m INFO 02-19 17:53:31 [parallel_state.py:1423] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946] EngineCore failed to start.
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946] Traceback (most recent call last):
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 937, in run_engine_core
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 691, in __init__
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]     super().__init__(
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 105, in __init__
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]     self.model_executor = executor_class(vllm_config)
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/executor/abstract.py", line 101, in __init__
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]     self._init_executor()
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/executor/uniproc_executor.py", line 47, in _init_executor
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]     self.driver_worker.init_device()
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/worker_base.py", line 326, in init_device
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]     self.worker.init_device()  # type: ignore
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/gpu_worker.py", line 235, in init_device
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]     self.requested_memory = request_memory(init_snapshot, self.cache_config)
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/utils.py", line 260, in request_memory
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946]     raise ValueError(
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ERROR 02-19 17:53:31 [core.py:946] ValueError: Free memory on device cuda:0 (0.61/7.53 GiB) on startup is less than desired GPU memory utilization (0.9, 6.77 GiB). Decrease GPU memory utilization or reduce GPU memory used by other processes.
+[0;36m(EngineCore_DP0 pid=162522)[0;0m Process EngineCore_DP0:
+[0;36m(EngineCore_DP0 pid=162522)[0;0m Traceback (most recent call last):
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     self.run()
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/multiprocessing/process.py", line 108, in run
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     self._target(*self._args, **self._kwargs)
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 950, in run_engine_core
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     raise e
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 937, in run_engine_core
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 691, in __init__
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     super().__init__(
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 105, in __init__
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     self.model_executor = executor_class(vllm_config)
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/executor/abstract.py", line 101, in __init__
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     self._init_executor()
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/executor/uniproc_executor.py", line 47, in _init_executor
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     self.driver_worker.init_device()
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/worker_base.py", line 326, in init_device
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     self.worker.init_device()  # type: ignore
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/gpu_worker.py", line 235, in init_device
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     self.requested_memory = request_memory(init_snapshot, self.cache_config)
+[0;36m(EngineCore_DP0 pid=162522)[0;0m   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/vllm/v1/worker/utils.py", line 260, in request_memory
+[0;36m(EngineCore_DP0 pid=162522)[0;0m     raise ValueError(
+[0;36m(EngineCore_DP0 pid=162522)[0;0m ValueError: Free memory on device cuda:0 (0.61/7.53 GiB) on startup is less than desired GPU memory utilization (0.9, 6.77 GiB). Decrease GPU memory utilization or reduce GPU memory used by other processes.
+[rank0]:[W219 17:53:31.270013642 ProcessGroupNCCL.cpp:1524] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
 ERROR:    Traceback (most recent call last):
   File "/home/eth/miniconda3/envs/awabot-voxtral/lib/python3.10/site-packages/starlette/routing.py", line 694, in lifespan
     async with self.lifespan_context(app) as maybe_state:

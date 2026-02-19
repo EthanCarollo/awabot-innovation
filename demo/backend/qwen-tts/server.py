@@ -60,14 +60,30 @@ async def ws_qwen_tts(ws: WebSocket):
 
             text = msg["text"]
             language = msg.get("language", "French")
+            prompt_audio_b64 = msg.get("prompt_audio")
+            prompt_text = msg.get("prompt_text")
 
             await ws.send_json({"type": "status", "message": "generating"})
 
             try:
+                ref_audio_path = None
+                if prompt_audio_b64:
+                    import tempfile
+                    # Save base64 prompt to a temp wav file
+                    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+                        f.write(base64.b64decode(prompt_audio_b64))
+                        ref_audio_path = f.name
+
+                # Calling model with expected params: text, language, ref_audio, prompt_text
                 wavs, sr = model.generate_voice_clone(
                     text=text,
                     language=language,
+                    ref_audio=ref_audio_path,
+                    prompt_text=prompt_text
                 )
+
+                if ref_audio_path and os.path.exists(ref_audio_path):
+                    os.remove(ref_audio_path)
 
                 buf = io.BytesIO()
                 sf.write(buf, wavs[0], sr, format="WAV")

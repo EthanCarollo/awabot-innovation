@@ -1,61 +1,42 @@
-# Backend — Awabot Demo
+# Awabot Demo - Backend AI Services
 
-Serveur FastAPI qui charge et execute les modeles d'IA localement sur GPU.
+Ce dossier contient les briques d'intelligence artificielle du projet Awabot, isolees dans des environnements dedies pour eviter les conflits de dependances (notamment sur `transformers`).
 
-## Prerequis
+## Architecture des Services
 
-> **Important** : Ce backend est concu et optimise pour une inference GPU **NVIDIA (CUDA)**.
-> Les modeles utilises ne sont pas compatibles avec Apple MLX, AMD ROCm ou inference CPU.
-> Un GPU avec minimum **16 Go de VRAM** est recommande (ex: RTX 4090, A100, L40).
+Le backend est decompose en 3 services standalone tournant sur des ports distincts :
 
-## Endpoints
+| Service | Port | Modele | Environnement Conda |
+| :--- | :--- | :--- | :--- |
+| **Voxtral ASR** | 8082 | `Voxtral-Mini-4B-Realtime` | `awabot-voxtral` |
+| **Qwen ASR** | 8083 | `Qwen3-ASR-1.7B` | `awabot-qwen-asr` |
+| **Qwen TTS** | 8084 | `Qwen3-TTS-0.6B` | `awabot-qwen-tts` |
 
-| Endpoint | Service | Modele | Package |
-|---|---|---|---|
-| `/ws/voxtral` | Voxtral ASR | `mistralai/Voxtral-Mini-4B-Realtime-2602` | vLLM |
-| `/ws/qwen-asr` | Qwen3 ASR | `Qwen/Qwen3-ASR-1.7B` | qwen-asr |
-| `/ws/qwen-tts` | Qwen3 TTS | `Qwen/Qwen3-TTS-12Hz-0.6B-Base` | qwen-tts |
+## Installation et Lancement Rapide
 
-## Installation
+Le script `manage.sh` automatise la creation des environnements Conda, l'installation des dependances et le lancement des services.
 
-> `qwen-asr` et `qwen-tts` ont un conflit de version sur `transformers`.
-> Utilisez le script d'installation qui gere ce cas :
-
+### 1. Lancer les services
 ```bash
-bash install.sh
+bash manage.sh
 ```
+Le script verifiera si les ports sont deja utilises et vous proposera de tuer les processus existants si necessaire.
 
-## Lancement
-
+### 2. Arreter tous les services
 ```bash
-uvicorn server:app --host 0.0.0.0 --port 8082 --reload
+bash manage.sh stop
 ```
 
-Les modeles sont charges automatiquement au demarrage du serveur. Le premier lancement
-telecharge les poids depuis HuggingFace (~10 Go au total).
+## Configuration Requise
 
-## Configuration
+- **GPU NVIDIA** avec CUDA 12.x recommandé.
+- **Conda** installe sur le systeme.
+- Environ 12-16 Go de VRAM pour faire tourner les 3 modeles simultanement.
 
-| Variable | Defaut | Description |
-|---|---|---|
-| `DEVICE` | `cuda:0` | GPU a utiliser |
-| `VOXTRAL_MODEL` | `mistralai/Voxtral-Mini-4B-Realtime-2602` | Modele Voxtral |
-| `QWEN_ASR_MODEL` | `Qwen/Qwen3-ASR-1.7B` | Modele Qwen ASR |
-| `QWEN_TTS_MODEL` | `Qwen/Qwen3-TTS-12Hz-0.6B-Base` | Modele Qwen TTS |
+## Structure des dossiers
 
-## Architecture
+- `voxtral-asr/` : Transcription temps reel via vLLM.
+- `qwen-asr/` : Transcription multilingue via `qwen-asr`.
+- `qwen-tts/` : Synthese vocale et clonage de voix via `qwen-tts`.
 
-```
-server.py          # Point d'entree FastAPI, charge les modeles au startup
-voxtral_asr.py     # Classe VoxtralASR (inference locale vLLM)
-qwen_asr.py        # Classe QwenASR (inference locale qwen-asr)
-qwen_tts.py        # Classe QwenTTS (inference locale qwen-tts)
-```
-
-## Sante du serveur
-
-```bash
-curl http://localhost:8082/health
-```
-
-Retourne le statut de chaque modele (charge ou non).
+Chaque service dispose de son propre `server.py` (FastAPI) et `requirements.txt`.
