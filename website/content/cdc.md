@@ -160,6 +160,8 @@ xychart-beta
 
 L'utilisation de **Qwen3-ASR (1.7B)** est une option sérieuse si l'on recherche un compromis optimal entre vitesse d'inférence et précision, particulièrement sur les datasets longs ou complexes.
 
+> **IMPORTANT : Souveraineté et modèles Open-Weight** : Dans une stratégie d'auto-hébergement, la provenance géographique d'un modèle (ex: modèles chinois comme Qwen) ne constitue pas un risque de sécurité ou de confidentialité. Contrairement à une utilisation via API Cloud soumise à des politiques de collecte de données tierces, un modèle **Open-Weight** exécuté sur notre propre infrastructure est totalement isolé. Le flux de données est géré de bout en bout par Awabot, garantissant l'absence de fuites ou de surveillance externe.
+
 ### 3.5 Traduction
 
 Une fois la parole capturée et transcrite avec une faible latence par la brique ASR, le système entre dans sa phase de **traduction**. L'objectif est de permettre un échange fluide entre un visiteur et un guide s'exprimant dans des langues différentes.
@@ -266,4 +268,15 @@ Le client (Awabot valide)
 [Synthèse et prochaines étapes.]
 ## 10. Annexes
 
-[Documents complémentaires, maquettes, références.]
+*   **Projet & Expérimentations** :
+    - [GitHub Awabot Innovation](https://github.com/EthanCarollo/awabot-innovation) — Code source du site web, documentations et prototypes (remotion, voxtral, realbench).
+*   **Transcription & Audio** :
+    *   [Mistral AI](https://mistral.ai/) — Modèles ASR (Voxtral).
+    *   [Qwen3-Audio](https://github.com/QwenLM/Qwen-Audio) — Modèles Qwen ASR.
+    *   [Kyutai](https://kyutai.org/) — Recherche sur la voix et modèles temps réel (Moshi).
+*   **Infrastructure & Inférence** :
+    *   [vLLM](https://vllm.ai/) — Moteur d'inférence LLM/ASR optimisé.
+    *   [Django REST Framework](https://www.django-rest-framework.org/) — Backend & API logic.
+*   **Frontend & Analytics** :
+    *   [Nuxt.js](https://nuxt.com/) — Framework Web & SSR.
+    *   [Umami](https://umami.is/) — Analytics respectueux de la vie privée.

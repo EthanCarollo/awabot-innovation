@@ -76,22 +76,19 @@
           
           prose-code:text-awabot-orange prose-code:bg-awabot-orange/5 prose-code:px-2 prose-code:py-0.5 prose-code:rounded-lg prose-code:font-bold prose-code:text-[0.9em] prose-code:before:content-none prose-code:after:content-none
           
-          prose-blockquote:border-l-4 prose-blockquote:border-awabot-yellow prose-blockquote:bg-awabot-yellow/5 prose-blockquote:py-2 prose-blockquote:px-8 prose-blockquote:rounded-r-2xl prose-blockquote:italic prose-blockquote:text-[#111111]/80
+          prose-blockquote:border-l-4 prose-blockquote:border-awabot-yellow prose-blockquote:bg-awabot-yellow/5 prose-blockquote:py-2 prose-blockquote:px-8 prose-blockquote:rounded-r-2xl prose-blockquote:italic prose-blockquote:text-[#111111]/80 prose-blockquote:before:content-none prose-blockquote:after:content-none
           
           prose-table:text-[15px] prose-table:border-collapse prose-table:my-10
           prose-th:bg-[#F5F6F7] prose-th:text-[#111111] prose-th:p-4 prose-th:font-bold prose-th:border prose-th:border-gray-200
           prose-td:p-4 prose-td:border prose-td:border-gray-100 prose-td:text-gray-600
           
-           prose-img:my-12 prose-img:mx-auto
+          prose-img:my-12 prose-img:mx-auto
+          
           
           prose-hr:my-16 prose-hr:border-gray-100
         ">
           <ContentRenderer v-if="page" :value="page" />
         </article>
-
-        <div class="text-center py-16 text-xs font-bold uppercase tracking-widest text-[#111111]/20">
-          Awabot Innovation Group © {{ new Date().getFullYear() }}
-        </div>
       </main>
     </div>
   </div>
