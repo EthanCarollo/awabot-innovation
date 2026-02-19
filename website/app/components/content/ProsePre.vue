@@ -1,14 +1,12 @@
 <template>
   <div v-if="isMermaid" class="my-8">
-    <ClientOnly>
-      <div ref="mermaidEl" class="flex justify-center overflow-x-auto" />
-    </ClientOnly>
+    <div ref="mermaidEl" class="flex justify-center overflow-x-auto min-h-[100px]" />
   </div>
   <pre v-else :class="$props.class"><slot /></pre>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 
 const props = defineProps({
   code: { type: String, default: '' },
@@ -23,27 +21,40 @@ const isMermaid = computed(() => props.language === 'mermaid')
 const mermaidEl = ref<HTMLElement | null>(null)
 
 onMounted(async () => {
-  if (!isMermaid.value || !mermaidEl.value) return
+  if (!isMermaid.value) return
+  
+  // Wait for nextTick to satisfy hydration and ensure ref is bound
+  await nextTick()
+  
+  console.log('ProsePre mounted:', { language: props.language, hasCode: !!props.code, codeLength: props.code?.length, hasEl: !!mermaidEl.value })
+  
+  if (!mermaidEl.value) {
+    console.error('ProsePre: mermaidEl is still null after nextTick')
+    return
+  }
 
   const code = props.code?.trim()
   if (!code) return
 
-  const mermaid = (await import('mermaid')).default
-  mermaid.initialize({
-    startOnLoad: false,
-    theme: 'default',
-    fontFamily: 'Inter, system-ui, sans-serif',
-    securityLevel: 'loose',
-  })
-
-  const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`
-
   try {
+    const mermaid = (await import('mermaid')).default
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      securityLevel: 'loose',
+    })
+
+    const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`
     const { svg } = await mermaid.render(id, code)
-    mermaidEl.value.innerHTML = svg
+    if (mermaidEl.value) {
+      mermaidEl.value.innerHTML = svg
+    }
   } catch (e) {
-    console.error('Mermaid render error:', e)
-    mermaidEl.value.innerHTML = `<pre class="p-4 bg-red-50 text-red-600 text-sm rounded-lg">${code}</pre>`
+    console.error('ProsePre: Mermaid render error:', e)
+    if (mermaidEl.value) {
+      mermaidEl.value.innerHTML = `<pre class="p-4 bg-red-50 text-red-600 text-sm rounded-lg">Mermaid Error: ${e instanceof Error ? e.message : String(e)}\n\n${code}</pre>`
+    }
   }
 })
 </script>
