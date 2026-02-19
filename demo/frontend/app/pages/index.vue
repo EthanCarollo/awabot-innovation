@@ -1,44 +1,48 @@
 <template>
   <div class="container">
     <div class="hero">
-      <img src="/logo_baseline.svg" alt="Awabot" class="hero-logo" />
-      <h1>Espace Demo</h1>
-      <p class="subtitle">Testez les briques IA du projet Awabot en temps reel.</p>
+      <div class="hero-header">
+        <img src="/logo_baseline.svg" alt="Awabot" class="hero-logo" />
+        <h1>Espace Demo</h1>
+        <p class="subtitle">Decouvrez nos briques d'intelligence artificielle souveraines et performantes.</p>
+      </div>
       
       <!-- System Health Monitor -->
       <div class="health-monitor">
         <div class="health-item" v-for="svc in services" :key="svc.name">
           <div class="health-dot" :class="{ 'health-dot--online': svc.online }"></div>
-          <span class="health-name">{{ svc.label }}</span>
-          <span class="health-status">{{ svc.online ? 'Online' : 'Offline' }}</span>
+          <div class="health-info">
+            <span class="health-name">{{ svc.label }}</span>
+            <span class="health-status">{{ svc.online ? 'Operationnel' : 'Hors-ligne' }}</span>
+          </div>
         </div>
       </div>
 
       <div class="cards">
         <div v-for="card in cards" :key="card.to" class="demo-card-wrapper">
           <NuxtLink :to="card.to" class="demo-card">
-            <div class="demo-header">
+            <div class="card-top">
               <div :class="['demo-icon', card.iconClass]">{{ card.iconText }}</div>
               <span class="demo-tag">{{ card.tag }}</span>
             </div>
-            <h2>{{ card.title }}</h2>
-            <p>{{ card.description }}</p>
             
-            <div class="model-info">
-              <div class="model-name">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                </svg>
-                <code>{{ card.model }}</code>
+            <div class="card-body">
+              <h2>{{ card.title }}</h2>
+              <p>{{ card.description }}</p>
+            </div>
+            
+            <div class="card-footer">
+              <div class="model-meta">
+                <span class="meta-label">Moteur</span>
+                <code class="meta-value">{{ card.model }}</code>
               </div>
-              <a :href="card.hfUrl" target="_blank" class="hf-mini-link" @click.stop>
-                Hugging Face
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                  <polyline points="15 3 21 3 21 9"/>
-                  <line x1="10" y1="14" x2="21" y2="3"/>
+              <div class="card-action">
+                <span>Tester</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
                 </svg>
-              </a>
+              </div>
             </div>
           </NuxtLink>
         </div>
@@ -61,30 +65,30 @@ const cards = [
     to: '/voxtral',
     iconClass: 'demo-icon--orange',
     iconText: 'ASR',
-    tag: 'Mistral AI',
+    tag: 'Streaming',
     title: 'Voxtral ASR',
-    description: 'Transcription temps reel via Mistral Voxtral Mini 4B.',
-    model: 'Voxtral-Mini-4B-Realtime',
+    description: 'Transcription temps reel ultra-rapide basee sur Mistral Voxtral Mini 4B.',
+    model: 'Voxtral-4B',
     hfUrl: 'https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602'
   },
   {
     to: '/qwen-asr',
     iconClass: 'demo-icon--indigo',
     iconText: 'ASR',
-    tag: 'Qwen / Alibaba',
+    tag: 'Multilingue',
     title: 'Qwen3 ASR',
-    description: 'Transcription via Qwen3-ASR 1.7B, optimise pour le multilangue.',
-    model: 'Qwen3-ASR-1.7B',
+    description: 'Transcription robuste supportant plus de 50 langues avec Qwen3 1.7B.',
+    model: 'Qwen3-1.7B',
     hfUrl: 'https://huggingface.co/Qwen/Qwen3-ASR-1.7B'
   },
   {
     to: '/qwen-tts',
     iconClass: 'demo-icon--yellow',
     iconText: 'TTS',
-    tag: 'Qwen / Alibaba',
+    tag: 'Synthese',
     title: 'Qwen3 TTS',
-    description: 'Synthese vocale ultra-legere (0.6B) avec clonage de voix.',
-    model: 'Qwen3-TTS-0.6B',
+    description: 'Synthese vocale naturelle et clonage de voix via Qwen3 0.6B.',
+    model: 'Qwen3-0.6B',
     hfUrl: 'https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base'
   }
 ]
@@ -114,64 +118,81 @@ onUnmounted(() => {
 
 <style scoped>
 .container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 60px 20px;
+  padding: 80px 40px;
 }
 
 .hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-header {
   text-align: center;
+  margin-bottom: 48px;
 }
 
 .hero-logo {
-  height: 32px;
+  height: 36px;
   width: auto;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .hero h1 {
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 900;
-  letter-spacing: -1.5px;
+  letter-spacing: -2px;
   color: var(--carbon);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .subtitle {
   color: var(--text-muted);
-  font-size: 17px;
-  margin-bottom: 32px;
+  font-size: 18px;
+  max-width: 600px;
+  line-height: 1.5;
 }
 
 /* Health Monitor Styles */
 .health-monitor {
-  display: inline-flex;
-  gap: 32px;
-  background: var(--bg-card);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
   border: 1px solid var(--border);
-  padding: 10px 28px;
-  border-radius: 50px;
-  margin-bottom: 60px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 64px;
 }
 
 .health-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
+  background: white;
+  padding: 16px 24px;
 }
 
 .health-dot {
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #ef4444; /* Offline */
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
-  transition: all 0.3s;
+  background: #EF4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .health-dot--online {
-  background: #10b981;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
+  background: #10B981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.health-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .health-name {
@@ -184,130 +205,139 @@ onUnmounted(() => {
 
 .health-status {
   font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
+/* Cards */
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  text-align: left;
+  gap: 24px;
+  width: 100%;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .cards { grid-template-columns: repeat(2, 1fr); }
+  .health-monitor { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .cards { grid-template-columns: 1fr; }
+  .health-monitor { grid-template-columns: 1fr; }
 }
 
 .demo-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 32px;
   text-decoration: none;
   color: var(--text);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   height: 100%;
 }
 
 .demo-card:hover {
   border-color: var(--orange);
-  transform: translateY(-4px);
+  transform: translateY(-8px);
   background: white;
-  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08);
 }
 
-.demo-header {
+.card-top {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
 .demo-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
-.demo-icon--orange { background: rgba(255, 126, 34, 0.08); color: var(--orange); }
-.demo-icon--indigo { background: rgba(99, 102, 241, 0.08); color: #6366f1; }
-.demo-icon--yellow { background: rgba(250, 193, 48, 0.1); color: #d97706; }
-
-.demo-card h2 {
-  font-size: 18px;
-  font-weight: 800;
-  margin-bottom: 10px;
-  letter-spacing: -0.3px;
-}
-
-.demo-card p {
-  font-size: 13.5px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 24px;
-}
+.demo-icon--orange { background: #FF7E2210; color: var(--orange); }
+.demo-icon--indigo { background: #6366f110; color: var(--indigo); }
+.demo-icon--yellow { background: #FAC13015; color: #D97706; }
 
 .demo-tag {
   font-size: 10px;
   font-weight: 700;
   color: var(--text-muted);
   background: var(--bg);
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.model-info {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.card-body h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
 }
 
-.model-name {
+.card-body p {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.model-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-label {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.meta-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--carbon);
+  background: var(--bg);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.card-action {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.model-name code {
-  font-family: ui-monospace, monospace;
-  background: var(--bg);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.hf-mini-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--carbon);
-  text-decoration: none;
-  width: fit-content;
-  padding: 4px 0;
-  transition: color 0.2s;
+  transition: all 0.2s;
 }
 
-.hf-mini-link:hover {
+.demo-card:hover .card-action {
   color: var(--orange);
+  transform: translateX(4px);
 }
 </style>

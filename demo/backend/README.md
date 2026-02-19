@@ -1,4 +1,8 @@
-# Awabot Demo - Backend AI Services
+<p align="center">
+  <img src="../../website/public/logo_baseline.svg" width="300" alt="Awabot Logo">
+</p>
+
+# Awabot Demo - Isolated Backend Services
 
 Ce dossier contient les briques d'intelligence artificielle du projet Awabot, isolees dans des environnements dedies pour eviter les conflits de dependances (notamment sur `transformers`).
 

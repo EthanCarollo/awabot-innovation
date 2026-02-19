@@ -61,7 +61,7 @@ async def ws_qwen_tts(ws: WebSocket):
             text = msg["text"]
             language = msg.get("language", "French")
             prompt_audio_b64 = msg.get("prompt_audio")
-            prompt_text = msg.get("prompt_text")
+            ref_text = msg.get("prompt_text") # Using msg.get("prompt_text") but mapping to ref_text
 
             await ws.send_json({"type": "status", "message": "generating"})
 
@@ -74,12 +74,12 @@ async def ws_qwen_tts(ws: WebSocket):
                         f.write(base64.b64decode(prompt_audio_b64))
                         ref_audio_path = f.name
 
-                # Calling model with expected params: text, language, ref_audio, prompt_text
+                # Calling model with expected params: text, language, ref_audio, ref_text
                 wavs, sr = model.generate_voice_clone(
                     text=text,
                     language=language,
                     ref_audio=ref_audio_path,
-                    prompt_text=prompt_text
+                    ref_text=ref_text
                 )
 
                 if ref_audio_path and os.path.exists(ref_audio_path):

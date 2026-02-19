@@ -1,80 +1,97 @@
 <template>
   <div class="container">
     <header class="header">
-      <div>
-        <h1 class="title">Voxtral ASR</h1>
-        <p class="subtitle">Transcription temps reel — Mistral Voxtral Mini 4B</p>
+      <div class="header-left">
+        <div class="title-row">
+          <h1 class="title">Voxtral ASR</h1>
+          <StatusBadge :status="status" />
+        </div>
+        <p class="subtitle">Transcription temps reel via Mistral Voxtral Mini 4B.</p>
       </div>
-      <StatusBadge :status="status" />
+      <div class="header-actions">
+        <button class="btn btn-secondary" @click="clearTranscript" :disabled="!transcript">
+          Effacer
+        </button>
+      </div>
     </header>
 
-    <div class="main-grid">
-      <!-- Camera Preview Column -->
-      <div class="card video-card">
-        <div class="card-header">
-          <h2>Video Preview</h2>
-        </div>
-        <div class="video-container">
-          <video v-show="cameraActive" ref="videoEl" autoplay playsinline muted class="video-feed"></video>
-          <div v-if="!cameraActive" class="video-placeholder">
-            <div class="placeholder-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M23 7l-7 5 7 5V7z"/>
-                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-              </svg>
+    <div class="layout-grid">
+      <!-- Media Column -->
+      <div class="column-media">
+        <div class="card video-card">
+          <div class="card-label">Flux Video</div>
+          <div class="video-viewport">
+            <video v-show="cameraActive" ref="videoEl" autoplay playsinline muted class="video-feed"></video>
+            <div v-if="!cameraActive" class="video-placeholder">
+              <div class="placeholder-art">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                  <path d="M23 7l-7 5 7 5V7z"/>
+                  <rect x="1" y="5" width="15" height="14" rx="3" ry="3"/>
+                  <circle cx="8.5" cy="12" r="1.5"/>
+                </svg>
+              </div>
+              <p>Camera inactive</p>
+              <span>Lancez la transcription pour activer la camera</span>
             </div>
-            <p>Camera inactive</p>
+          </div>
+        </div>
+
+        <div class="card controls-card">
+          <div class="card-label">Controles</div>
+          <div class="controls-body">
+            <div class="action-btn-wrapper">
+              <button v-if="!isRecording" class="btn btn-primary btn-record" @click="toggleRecording" :disabled="status === 'connecting'">
+                <div class="record-dot"></div>
+                Demarrer la transcription
+              </button>
+              <button v-else class="btn btn-stop" @click="toggleRecording">
+                <div class="stop-square"></div>
+                Arreter la capture
+              </button>
+            </div>
+            
+            <div class="visualizer-container">
+              <AudioVisualizer v-if="isRecording" :levels="audioLevel" />
+              <div v-else class="visualizer-placeholder">
+                <div class="v-bar" v-for="i in 12" :key="i"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Controls & Visualizer Column -->
-      <div class="card controls-card">
-        <div class="card-header">
-          <h2>Controles</h2>
-        </div>
-        <div class="controls-content">
-          <div class="action-zone">
-            <button v-if="!isRecording" class="btn btn-start" @click="toggleRecording" :disabled="status === 'connecting'">
-              Demarrer
-            </button>
-            <button v-else class="btn btn-stop" @click="toggleRecording">
-              Arreter
-            </button>
-          </div>
-          <div class="visualizer-zone">
-            <AudioVisualizer v-if="isRecording" :levels="audioLevel" />
-            <p class="hint" v-else>Cliquez pour commencer la transcription</p>
+      <!-- Content Column -->
+      <div class="column-content">
+        <div class="card transcript-card">
+          <div class="card-label">Transcription</div>
+          <div class="transcript-viewport" :class="{ 'is-active': isRecording }">
+            <div v-if="!transcript && !isRecording" class="transcript-empty">
+              Les paroles s'afficheront ici en temps reel...
+            </div>
+            <div v-else class="transcript-text">
+              {{ transcript }}<span v-if="isRecording" class="typing-cursor"></span>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <TranscriptPanel
-      :text="transcript"
-      :active="isRecording"
-      cursor-color="var(--orange)"
-      @clear="clearTranscript"
-    />
-
-    <!-- Model Info Section -->
-    <div class="card info-card">
-      <div class="card-header">
-        <h2>A propos du modele</h2>
-      </div>
-      <div class="info-content">
-        <div class="info-item">
-          <strong>Modele :</strong>
-          <code>mistralai/Voxtral-Mini-4B-Realtime-2602</code>
-        </div>
-        <div class="info-item">
-          <strong>Usage :</strong>
-          Modèle unifié texte et parole de 4 milliards de paramètres, optimisé pour la transcription en streaming avec une latence ultra-faible (SOTA ASR).
-        </div>
-        <div class="info-footer">
-          <a href="https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602" target="_blank" class="hf-link">
-            <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="HF" class="hf-logo" />
-            Voir sur Hugging Face
+        <div class="card info-card">
+          <div class="card-label">Fiche Technique</div>
+          <div class="info-grid">
+            <div class="info-field">
+              <span class="info-key">Modele</span>
+              <code class="info-val">Voxtral-Mini-4B</code>
+            </div>
+            <div class="info-field">
+              <span class="info-key">Type</span>
+              <code class="info-val">Unified Speech-to-Text</code>
+            </div>
+          </div>
+          <p class="info-desc">
+            Optimise pour le streaming, ce modele traite l'audio directement sans etape de modularisation intermediaire (CTC/RNN-T).
+          </p>
+          <a href="https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602" target="_blank" class="hf-btn">
+            <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="" />
+            Hugging Face Repository
           </a>
         </div>
       </div>
@@ -129,34 +146,31 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-.title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: var(--carbon); }
-.subtitle { font-size: 14px; color: var(--text-muted); }
+.container { max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
 
-.main-grid {
+/* Header */
+.header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+.title-row { display: flex; align-items: center; gap: 16px; margin-bottom: 4px; }
+.title { font-size: 32px; font-weight: 900; letter-spacing: -1px; color: var(--carbon); }
+.subtitle { font-size: 15px; color: var(--text-muted); font-weight: 500; }
+
+/* Layout Grid */
+.layout-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
+  grid-template-columns: 460px 1fr;
+  gap: 24px;
 }
 
-@media (max-width: 800px) {
-  .main-grid { grid-template-columns: 1fr; }
+@media (max-width: 1024px) {
+  .layout-grid { grid-template-columns: 1fr; }
 }
 
-.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; }
+/* Cards & Components */
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; position: relative; margin-bottom: 24px; }
+.card-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 24px; }
 
-.card-header h2 {
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-muted);
-  margin-bottom: 16px;
-}
-
-.video-container {
+/* Video Viewport */
+.video-viewport {
   aspect-ratio: 16/9;
   background: var(--bg);
   border-radius: 12px;
@@ -167,71 +181,63 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-.video-feed {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.video-feed { width: 100%; height: 100%; object-fit: cover; }
+.video-placeholder { text-align: center; color: var(--text-muted); }
+.placeholder-art { margin-bottom: 16px; opacity: 0.4; display: flex; justify-content: center; }
+.video-placeholder p { font-size: 13px; font-weight: 800; color: var(--carbon); margin-bottom: 4px; }
+.video-placeholder span { font-size: 11px; font-weight: 500; }
+
+/* Controls */
+.controls-body { display: flex; flex-direction: column; gap: 32px; }
+.btn { font-family: inherit; font-size: 14px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary { background: var(--orange); color: white; padding: 16px 32px; width: 100%; }
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 0px rgba(0,0,0,0.05); }
+
+.btn-stop { background: #EF4444; color: white; padding: 16px 32px; width: 100%; }
+.btn-stop:hover { transform: translateY(-2px); box-shadow: 0 4px 0px rgba(0,0,0,0.05); }
+
+.btn-secondary { background: white; border: 1px solid var(--border); color: var(--carbon); padding: 10px 20px; }
+.btn-secondary:hover:not(:disabled) { background: var(--bg); }
+
+.record-dot { width: 10px; height: 10px; background: white; border-radius: 50%; animation: pulse 1.5s infinite; }
+.stop-square { width: 10px; height: 10px; background: white; border-radius: 2px; }
+
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+.visualizer-container { height: 40px; display: flex; align-items: center; justify-content: center; }
+.visualizer-placeholder { display: flex; gap: 3px; align-items: center; }
+.v-bar { width: 3px; height: 6px; background: var(--border); border-radius: 1px; }
+
+/* Transcript Viewport */
+.transcript-card { min-height: 400px; display: flex; flex-direction: column; }
+.transcript-viewport { 
+  flex: 1; 
+  background: var(--bg); 
+  border-radius: 14px; 
+  padding: 32px; 
+  font-size: 18px; 
+  line-height: 1.8; 
+  color: var(--carbon); 
+  overflow-y: auto;
+  transition: all 0.3s;
+  border: 1px solid transparent;
 }
+.transcript-viewport.is-active { background: white; border-color: var(--orange); }
+.transcript-empty { color: var(--text-muted); font-style: italic; font-size: 16px; display: flex; height: 100%; align-items: center; justify-content: center; text-align: center; opacity: 0.6; }
 
-.video-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-muted);
-}
+.typing-cursor { display: inline-block; width: 8px; height: 20px; background: var(--orange); margin-left: 4px; vertical-align: middle; animation: blink 1s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-.placeholder-icon {
-  width: 64px;
-  height: 64px;
-  background: var(--bg-card);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-}
+/* Info Card */
+.info-desc { font-size: 14px; line-height: 1.6; color: var(--text-muted); margin: 24px 0; }
+.info-grid { display: flex; gap: 24px; }
+.info-field { display: flex; flex-direction: column; gap: 6px; }
+.info-key { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+.info-val { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 11px; font-weight: 600; color: var(--orange); background: #FF7E2208; padding: 4px 8px; border-radius: 6px; }
 
-.video-placeholder p { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-
-.controls-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-}
-
-.btn { display: inline-flex; align-items: center; gap: 10px; font-family: inherit; font-size: 15px; font-weight: 700; padding: 16px 36px; border: none; border-radius: 12px; cursor: pointer; transition: all .2s; }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn-start { background: var(--orange); color: #fff; }
-.btn-start:hover:not(:disabled) { opacity: 0.9; transform: scale(1.02); }
-.btn-stop { background: #ef4444; color: #fff; }
-.btn-stop:hover { opacity: 0.9; transform: scale(1.02); }
-
-.visualizer-zone { width: 100%; text-align: center; }
-.hint { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-
-/* Info Section */
-.info-card { margin-top: 16px; }
-.info-content { font-size: 14px; line-height: 1.6; color: var(--text); }
-.info-item { margin-bottom: 12px; }
-.info-item code { background: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 13px; color: var(--orange); }
-.info-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-.hf-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 8px 16px;
-  background: var(--bg);
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-.hf-link:hover { background: var(--border); }
-.hf-logo { width: 20px; height: 20px; }
+.hf-btn { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: var(--carbon); text-decoration: none; padding: 12px 20px; background: var(--bg); border-radius: 10px; transition: all 0.2s; border: 1px solid var(--border); }
+.hf-btn:hover { background: var(--border); }
+.hf-btn img { width: 18px; }
 </style>

@@ -79,14 +79,18 @@ done
 
 if [ "$RUNNING" = true ]; then
     echo "⚠️  Some services are already running on ports $VOXTRAL_PORT, $QWEN_ASR_PORT, or $QWEN_TTS_PORT."
-    read -p "Do you want to stop them and restart? (y/n/stop): " choice
+    echo "What do you want to do?"
+    echo "1) Stop them and restart (y)"
+    echo "2) Just stop them and exit (s)"
+    echo "3) Abort startup (any other key)"
+    read -p "Your choice (y/s/n): " choice
     case "$choice" in 
-      y|Y ) 
+      y|Y|1 ) 
         kill_services
         ;;
-      stop|STOP )
+      s|S|stop|STOP|2 )
         kill_services
-        echo "Services stopped."
+        echo "Services stopped. Exiting."
         exit 0
         ;;
       * ) 

@@ -28,15 +28,16 @@
 :root {
   --orange: #FF7E22;
   --yellow: #FAC130;
+  --indigo: #6366f1;
   --carbon: #111111;
-  --chalk: #F5F6F7;
-  --bg: #F5F6F7;
+  --chalk: #F8F9FA;
+  --bg: #F8F9FA;
   --bg-card: #ffffff;
-  --bg-card-hover: #fafafa;
   --text: #111111;
-  --text-muted: #111111a0;
-  --border: #11111115;
-  --radius: 16px;
+  --text-muted: #6B7280;
+  --border: #E5E7EB;
+  --radius: 20px;
+  --radius-sm: 12px;
 }
 
 body {
@@ -44,6 +45,7 @@ body {
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
 
@@ -52,10 +54,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
-  height: 72px;
+  padding: 0 40px;
+  height: 80px;
   border-bottom: 1px solid var(--border);
-  background: var(--bg);
+  background: rgba(248, 249, 250, 0.8);
+  backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -68,32 +71,33 @@ body {
 }
 
 .nav-logo {
-  height: 28px;
+  height: 32px;
   width: auto;
 }
 
 .nav-links {
   display: flex;
-  gap: 4px;
+  gap: 8px;
 }
 
 .nav-link {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-muted);
   text-decoration: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  transition: all 0.2s;
+  padding: 10px 18px;
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-link:hover {
   color: var(--text);
-  background: var(--border);
+  background: var(--bg-card);
 }
 
 .nav-link.router-link-active {
   color: var(--orange);
-  background: rgba(255, 126, 34, 0.08);
+  background: white;
+  border: 1px solid var(--border);
 }
 </style>

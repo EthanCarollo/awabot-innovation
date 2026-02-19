@@ -277,7 +277,8 @@ Ce projet positionne Awabot comme un précurseur de la téléprésence intellige
 ## 10. Annexes
 
 *   **Projet & Expérimentations** :
-    - [GitHub Awabot Innovation](https://github.com/EthanCarollo/awabot-innovation) — Code source du site web, documentations et prototypes (remotion, voxtral, realbench).
+    - [GitHub Awabot Innovation](https://github.com/EthanCarollo/awabot-innovation) — Code source du site web, documentations et prototypes.
+    - [Démos Interactives](https://github.com/EthanCarollo/awabot-innovation/tree/main/demo) — Ensemble des démonstrateurs ASR et TTS.
 *   **Transcription & Audio** :
     *   [Mistral AI](https://mistral.ai/) — Modèles ASR (Voxtral).
     *   [Qwen3-Audio](https://github.com/QwenLM/Qwen-Audio) — Modèles Qwen ASR.

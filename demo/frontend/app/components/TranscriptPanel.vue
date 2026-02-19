@@ -44,60 +44,70 @@ watch(() => props.text, async () => {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
+  margin-bottom: 24px;
 }
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 .card-header h2 {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-muted);
 }
 .btn-icon {
-  background: none;
+  background: white;
   border: 1px solid var(--border);
   color: var(--text-muted);
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
 }
 .btn-icon:hover {
   background: var(--bg);
-  color: var(--text);
+  color: var(--carbon);
+  border-color: var(--carbon);
 }
 .transcript-body {
-  min-height: 180px;
-  max-height: 360px;
+  min-height: 240px;
+  max-height: 500px;
   overflow-y: auto;
-  padding: 16px;
+  padding: 32px;
   background: var(--bg);
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid var(--border);
 }
 .placeholder {
   color: var(--text-muted);
   font-style: italic;
-  font-size: 14px;
+  font-size: 15px;
+  text-align: center;
+  margin-top: 60px;
+  opacity: 0.6;
 }
 .transcript-text {
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 18px;
+  line-height: 1.8;
   white-space: pre-wrap;
   word-break: break-word;
-  color: var(--text);
+  color: var(--carbon);
 }
 .cursor {
+  display: inline-block;
+  width: 8px;
+  height: 20px;
+  margin-left: 4px;
+  vertical-align: middle;
   animation: blink 1s infinite;
-  font-weight: 700;
 }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 </style>
