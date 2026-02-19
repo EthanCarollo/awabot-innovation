@@ -55,7 +55,7 @@
 
       <!-- Document -->
       <main class="flex-1 min-w-0">
-        <article class="bg-white rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-12 md:p-20 prose prose-slate prose-lg max-w-none
+        <article class="bg-white rounded-[32px] border border-gray-100 p-12 md:p-20 prose prose-slate prose-lg max-w-none
           prose-headings:font-black prose-headings:tracking-tight prose-headings:text-[#111111]
           
           prose-h1:text-4xl prose-h1:mb-12 prose-h1:pb-6 prose-h1:border-b-4 prose-h1:border-awabot-orange
