@@ -180,10 +180,10 @@ Le flux de données suit un cycle itératif conçu pour minimiser la latence per
 
 **Solutions de traduction envisagées :**
 Pour maintenir la souveraineté et la performance, nous préconisons :
-*   **HY-MT (Tencent)** : Modèle de pointe offrant une qualité de traduction exceptionnelle pour le multilingue.
-*   **Gemma Translate** : Basé sur l'architecture Google Gemma, très performant pour les paires de langues courantes (FR/EN).
-*   **LibreTranslate** : Solution open-source auto-hébergée robuste pour une indépendance totale et des coûts serveurs maîtrisés.
-*   **Modèles de traduction via LLM** : Utilisation de modèles compacts (ex: **MarianMT** ou familles **Mistral 7B/8x7B**) optimisés pour la traduction.
+*   [**HY-MT (Tencent)**](https://huggingface.co/tencent/HY-MT1.5-1.8B) : Modèle de pointe offrant une qualité de traduction exceptionnelle pour le multilingue.
+*   [**Gemma Translate**](https://huggingface.co/google/translategemma-4b-it) : Basé sur l'architecture Google Gemma, très performant pour les paires de langues courantes (FR/EN).
+*   [**LibreTranslate**](https://fr.libretranslate.com/) : Solution open-source auto-hébergée robuste pour une indépendance totale et des coûts serveurs maîtrisés.
+*   **Modèles de traduction via LLM** : Utilisation de modèles compacts (ex: **MarianMT** ou familles [**Mistral 8x7B**](https://huggingface.co/mistralai/Mixtral-8x7B-v0.1)) optimisés pour la traduction.
 *   **Intégration vLLM** : Comme pour l'ASR, l'utilisation de **vLLM** est recommandée pour servir les modèles de traduction, permettant un débit élevé et une gestion efficace de la mémoire GPU.
 
 Cette boucle garantit que l'interaction reste "vivante" et naturelle, même à travers une barrière linguistique.
@@ -193,7 +193,7 @@ Cette boucle garantit que l'interaction reste "vivante" et naturelle, même à t
 
 **Approche Design :**
 L'interface doit marquer une rupture avec l'austérité des interfaces industrielles en C++. Nous visons une esthétique "Premium & Accueillante".
-*   **Framework UI :** Utilisation de **TailwindCSS** pour une flexibilité totale et une identité visuelle propre à Awabot (pas de "look" Bootstrap ou Material générique).
+*   **Framework UI :** Utilisation de [**TailwindCSS**](https://tailwindcss.com/) pour une flexibilité totale et une identité visuelle propre à Awabot (pas de "look" Bootstrap ou Material générique).
 *   **Composants :** Création d'une bibliothèque de composants Vue.js réutilisables (Boutons, Indicateurs de batterie, Jauges de signal).
 
 **Détail des Interfaces :**
@@ -246,14 +246,12 @@ L'interface doit marquer une rupture avec l'austérité des interfaces industrie
 
 ### 6.2 Coordination et responsabilités
 
-[Définir la hiérarchie des intervenants, les processus de validation et le lead du projet.]
-Quels referents pour quel partie, les différentes équipes et qui valident quoi.
-Le client (Awabot valide)
-
+Le succès du projet repose sur une validation continue entre les équipes de développement et la direction d'Awabot :
+*   **Validation Client (Awabot)** : Chaque phase définie dans le calendrier (Concept, MVP, Pilote, etc.) doit faire l'objet d'une revue et d'une validation formelle par Awabot. Ces "gates" garantissent que les choix techniques et ergonomiques répondent parfaitement aux besoins opérationnels du terrain.
+*   **Pilotage du Projet** : Une équipe de lead technique assure le suivi quotidien, tandis qu'Awabot conserve la responsabilité de la validation finale avant chaque mise en production.
 ## 7. Collaboration client
 
-[Modalités de collaboration avec le client (réunions, outils de suivi, validations).]
-- Réunions hebdomadaires
+Le suivi du projet est rythmé par des **réunions hebdomadaires** (sprints reviews) permettant de passer en revue les avancées de la semaine, de valider les fonctionnalités développées et de réajuster les priorités selon les retours d'Awabot.
 
 ## 8. Communication et SEO
 
@@ -265,7 +263,16 @@ Le client (Awabot valide)
 
 ## 9. Conclusion
 
-[Synthèse et prochaines étapes.]
+La refonte de l'écosystème Awabot vers une stack **Full Web (Nuxt.js / Django)** représente un tournant stratégique majeur. En migrant du client lourd C++/Qt vers une interface web moderne, nous supprimons les barrières au déploiement tout en offrant une expérience utilisateur premium, fluide et accessible à tous, notamment dans le secteur du tourisme culturel.
+
+Le cœur de cette innovation repose sur l'intégration d'une **boucle d'intelligence artificielle souveraine**. Le couplage de la transcription temps réel (**Voxtral / Qwen3**) et d'une traduction contextuelle par LLM garantit non seulement une accessibilité mondiale, mais assure également une confidentialité totale grâce à l'auto-hébergement systématique des modèles **Open-Weight**.
+
+**Prochaines étapes :**
+1.  Finalisation du prototype technique Nuxt + WebRTC (Phase 1).
+2.  Déploiement du serveur d'inférence vLLM pour les tests ASR/Traduction initiaux.
+3.  Validation du design système et de l'accessibilité du "Cockpit" avec les premiers testeurs centres culturels.
+
+Ce projet positionne Awabot comme un précurseur de la téléprésence intelligente, alliant performance technique brute et inclusion sociale facilitée par l'IA.
 ## 10. Annexes
 
 *   **Projet & Expérimentations** :
@@ -277,6 +284,11 @@ Le client (Awabot valide)
 *   **Infrastructure & Inférence** :
     *   [vLLM](https://vllm.ai/) — Moteur d'inférence LLM/ASR optimisé.
     *   [Django REST Framework](https://www.django-rest-framework.org/) — Backend & API logic.
+*   **Modèles de Traduction** :
+    - [HY-MT (Tencent)](https://huggingface.co/tencent/HY-MT1.5-1.8B) — Modèle multilingue de haute qualité.
+    - [Gemma Translate](https://huggingface.co/google/translategemma-4b-it) — Traduction optimisée par Google.
+    - [LibreTranslate](https://fr.libretranslate.com/) — Solution open-source auto-hébergée.
 *   **Frontend & Analytics** :
     *   [Nuxt.js](https://nuxt.com/) — Framework Web & SSR.
+    *   [TailwindCSS](https://tailwindcss.com/) — Design system & CSS framework.
     *   [Umami](https://umami.is/) — Analytics respectueux de la vie privée.
