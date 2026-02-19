@@ -12,9 +12,9 @@
         </div>
 
         <!-- Center: Logo -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="flex items-center pointer-events-none lg:absolute lg:inset-0 lg:justify-center">
           <a href="/" class="pointer-events-auto cursor-pointer">
-            <img src="/logo_baseline.svg" alt="Awabot" class="h-14 w-auto" />
+            <img src="/logo_baseline.svg" alt="Awabot" class="h-10 lg:h-14 w-auto" />
           </a>
         </div>
 

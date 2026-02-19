@@ -34,6 +34,8 @@ async def load_model():
         max_new_tokens=256,
     )
     print("[QwenASR] Model loaded.")
+    
+    print("[QwenASR] Model loaded.")
 
 
 @app.get("/health")
@@ -120,4 +122,4 @@ async def ws_qwen_asr(ws: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("server:app", host="0.0.0.0", port=PORT, reload=True)
+    uvicorn.run("server:app", host="0.0.0.0", port=PORT, reload=True, reload_excludes=["*.log", "*.txt"])
