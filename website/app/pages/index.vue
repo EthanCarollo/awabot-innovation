@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-[#F5F6F7] selection:bg-awabot-orange/20">
     <!-- Navigation -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-[#F5F6F7] border-b border-awabot-carbon/10 h-20">
-      <nav class="max-w-[1700px] mx-auto px-8 h-full flex items-center justify-between relative">
+      <nav class="max-w-[1700px] mx-auto px-12 md:px-20 h-full flex items-center justify-between relative">
         <!-- Left: Desktop Nav Links -->
         <div class="hidden lg:flex items-center gap-6">
           <a href="#" class="text-[15px] font-bold text-awabot-carbon transition-colors hover:text-awabot-orange whitespace-nowrap">{{ t.nav.about }}</a>
@@ -13,9 +13,8 @@
 
         <!-- Center: Logo -->
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <a href="/" class="flex flex-col items-center pointer-events-auto cursor-pointer">
-            <span class="font-array text-awabot-orange text-3xl leading-none">awabot</span>
-            <span class="text-[9px] uppercase tracking-[0.2em] font-bold text-awabot-carbon/40 -mt-0.5">Closer than ever.</span>
+          <a href="/" class="pointer-events-auto cursor-pointer">
+            <img src="/logo_baseline.svg" alt="Awabot" class="h-14 w-auto" />
           </a>
         </div>
 
@@ -34,9 +33,9 @@
           </div>
 
           <div class="flex items-center gap-2.5 text-[13px] mr-6">
-            <button @click="lang = 'fr'" :class="lang === 'fr' ? 'text-awabot-orange font-bold' : 'text-awabot-carbon/40 font-medium'">Fr</button>
-            <span class="text-awabot-carbon/10">|</span>
-            <button @click="lang = 'en'" :class="lang === 'en' ? 'text-awabot-orange font-bold' : 'text-awabot-carbon/40 font-medium'">En</button>
+            <button @click="lang = 'fr'" :class="lang === 'fr' ? 'text-[#ff7e22] font-bold' : 'text-[#111111]/40 font-medium hover:text-[#ff7e22] transition-colors'">Fr</button>
+            <span class="text-[#111111]/10">|</span>
+            <button @click="lang = 'en'" :class="lang === 'en' ? 'text-[#ff7e22] font-bold' : 'text-[#111111]/40 font-medium hover:text-[#ff7e22] transition-colors'">En</button>
           </div>
 
           <button @click="showQuote = true" class="hidden sm:flex items-center gap-2 bg-[#fac130] text-awabot-carbon px-5 py-2.5 rounded-full font-bold text-[14px] hover:bg-awabot-orange hover:text-[#F5F6F7] transition-all group">
@@ -119,7 +118,7 @@
               {{ t.features.beam.desc }}
             </p>
             <div class="flex flex-wrap gap-4">
-              <button class="bg-[#111111] text-[#F5F6F7] px-8 py-3 rounded-full font-bold hover:opacity-80 transition-all">{{ t.btns.more }}</button>
+              <button class="bg-[#ff7e22] text-[#F5F6F7] px-8 py-3 rounded-full font-bold hover:opacity-90 transition-all">{{ t.btns.more }}</button>
             </div>
           </div>
           <div class="w-full lg:w-1/2 relative">
@@ -171,7 +170,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 h-auto md:h-[900px]">
           <!-- Big Item 1: F1 -->
           <div class="md:col-span-2 md:row-span-2 group relative overflow-hidden cursor-pointer border-r border-b border-white lg:border-none">
-            <img src="https://awabot.com/wp-content/uploads/2024/12/Couverture-article_F1-Abu-Dhabi.webp" alt="F1 News" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+            <img src="/f1_awabot.jpg" alt="F1 News" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-10 flex flex-col justify-end">
               <span class="text-awabot-yellow font-bold text-sm uppercase tracking-widest mb-4">Formule 1</span>
               <h3 class="text-3xl md:text-4xl font-extrabold text-white leading-[1.1] mb-8 max-w-xl">
@@ -190,7 +189,7 @@
 
           <!-- Item 2: TED-i -->
           <div class="md:col-span-1 group relative overflow-hidden cursor-pointer border-r border-b border-white lg:border-none">
-            <img src="https://awabot.com/wp-content/uploads/2024/11/Couverture-TED-i-min.webp" alt="TED-i" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+            <img src="/photo-tedi_awabot.png" alt="TED-i" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-8 flex flex-col justify-end">
               <span class="text-awabot-yellow font-bold text-xs uppercase tracking-widest mb-3">Éducation</span>
               <h3 class="text-xl font-bold text-white leading-tight mb-6">
@@ -232,7 +231,7 @@
 
           <!-- Item 5: HIKIKOMORI -->
           <div class="md:col-span-1 group relative overflow-hidden cursor-pointer lg:border-none">
-            <img src="https://awabot.com/wp-content/uploads/2024/10/Couverture-article_HIKIKOMORI_Awabot.webp" alt="HIKU" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+            <img src="/anne-sophieturion.jpg" alt="HIKU" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-8 flex flex-col justify-end">
               <span class="text-awabot-yellow font-bold text-xs uppercase tracking-widest mb-3">Innovation</span>
               <h3 class="text-lg font-bold text-white leading-tight mb-6">
@@ -251,12 +250,12 @@
           <h2 class="text-4xl font-array font-normal text-awabot-carbon mb-16">
             Ils nous font <span class="text-awabot-orange italic relative shimmer-text inline-block">confiance</span>
           </h2>
-          <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-60 grayscale hover:grayscale-0 transition-opacity duration-700">
-            <img src="https://awabot.com/wp-content/uploads/2024/12/3.png" alt="MESRI" class="h-16 md:h-20 w-auto object-contain" />
-            <img src="https://awabot.com/wp-content/uploads/2024/12/2.png" alt="F1" class="h-12 md:h-16 w-auto object-contain" />
-            <img src="https://awabot.com/wp-content/uploads/2024/12/1.png" alt="Engie" class="h-10 md:h-14 w-auto object-contain" />
-            <img src="https://awabot.com/wp-content/uploads/2024/12/5.png" alt="Paris 2024" class="h-16 md:h-20 w-auto object-contain" />
-            <img src="https://awabot.com/wp-content/uploads/2024/12/6.png" alt="EDF" class="h-12 md:h-16 w-auto object-contain" />
+          <div class="flex flex-wrap justify-center items-center gap-x-16 gap-y-12 md:gap-x-24 md:gap-y-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-700">
+            <img src="https://awabot.com/wp-content/uploads/2024/12/3.png" alt="MESRI" class="h-24 md:h-32 w-auto object-contain" />
+            <img src="https://awabot.com/wp-content/uploads/2024/12/2.png" alt="F1" class="h-16 md:h-24 w-auto object-contain" />
+            <img src="https://awabot.com/wp-content/uploads/2024/12/1.png" alt="Engie" class="h-14 md:h-20 w-auto object-contain" />
+            <img src="https://awabot.com/wp-content/uploads/2024/12/5.png" alt="Paris 2024" class="h-24 md:h-32 w-auto object-contain" />
+            <img src="https://awabot.com/wp-content/uploads/2024/12/6.png" alt="EDF" class="h-16 md:h-24 w-auto object-contain" />
           </div>
         </div>
       </section>
@@ -265,21 +264,24 @@
     <!-- Swiss Style Footer -->
     <footer class="bg-awabot-orange pt-20 pb-12 px-8 md:px-16 text-black font-switzer">
       <div class="max-w-[1700px] mx-auto">
-        <!-- Main Message -->
-        <div class="mb-24">
+        <div class="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <h2 class="text-5xl md:text-7xl lg:text-8xl font-array tracking-tight leading-[0.9]">
             Parlons de vos<br />prochains projets.
           </h2>
         </div>
 
         <!-- Info Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-y-12 gap-x-8 mb-32">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-y-12 gap-x-8 mb-20">
           <div class="md:col-span-4">
             <h3 class="text-sm font-bold uppercase tracking-widest mb-6 opacity-40">Contact</h3>
-            <div class="flex flex-col text-2xl font-bold leading-[1.1]">
+            <div class="flex flex-col text-2xl font-bold leading-[1.1] mb-12">
               <a href="tel:+33437236760" class="hover:opacity-60 transition-opacity">+33 (0)4 37 23 67 60</a>
               <a href="mailto:contact@awabot.com" class="hover:opacity-60 transition-opacity">contact@awabot.com</a>
             </div>
+            <a href="/cdc" class="inline-flex items-center gap-3 bg-black text-[#ff7e22] px-6 py-3 rounded-full font-bold text-sm hover:bg-black/80 transition-all">
+              Cahier des charges
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="bg-[#ff7e22] rounded-full p-0.5 text-black"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
           </div>
           
           <div class="md:col-span-4">
@@ -292,11 +294,19 @@
 
           <div class="md:col-span-4">
             <h3 class="text-sm font-bold uppercase tracking-widest mb-6 opacity-40">Suivez-nous</h3>
-            <div class="flex flex-wrap gap-x-8 gap-y-2 text-2xl font-bold leading-none">
-              <a href="#" class="hover:opacity-60 transition-opacity">LinkedIn</a>
-              <a href="#" class="hover:opacity-60 transition-opacity">Twitter</a>
-              <a href="#" class="hover:opacity-60 transition-opacity">Instagram</a>
-              <a href="#" class="hover:opacity-60 transition-opacity">YouTube</a>
+            <div class="flex flex-wrap gap-4">
+              <a href="#" class="w-12 h-12 rounded-full border-2 border-black/20 flex items-center justify-center hover:bg-black hover:text-awabot-orange transition-all duration-300 group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/></svg>
+              </a>
+              <a href="#" class="w-12 h-12 rounded-full border-2 border-black/20 flex items-center justify-center hover:bg-black hover:text-awabot-orange transition-all duration-300 group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.25 2.25h6.634l4.717 6.237L18.244 2.25z"/></svg>
+              </a>
+              <a href="#" class="w-12 h-12 rounded-full border-2 border-black/20 flex items-center justify-center hover:bg-black hover:text-awabot-orange transition-all duration-300 group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.332 3.608 1.308.975.975 1.247 2.242 1.308 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.332 2.633-1.308 3.608-.975.975-2.242 1.247-3.608 1.308-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.332-3.608-1.308-.975-.975-1.247-2.242-1.308-3.608-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.332-2.633 1.308-3.608.975-.975 2.242-1.247 3.608-1.308 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.337 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.336-.2 6.78-2.618 6.98-6.98.058-1.281.072-1.689.072-4.947s-.014-3.667-.072-4.947c-.2-4.349-2.619-6.78-6.98-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </a>
+              <a href="#" class="w-12 h-12 rounded-full border-2 border-black/20 flex items-center justify-center hover:bg-black hover:text-awabot-orange transition-all duration-300 group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.505 9.377.505 9.377.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </a>
             </div>
           </div>
         </div>
@@ -320,7 +330,7 @@
 
     <!-- Quote Form Overlay -->
     <Transition name="fade">
-      <div v-if="showQuote" class="fixed inset-0 z-[100] bg-awabot-chalk overflow-y-auto font-switzer">
+      <div v-if="showQuote" class="fixed inset-0 z-[100] bg-[#F5F6F7] overflow-y-auto font-switzer">
         <div class="max-w-4xl mx-auto px-8 py-12 md:py-20 relative">
           <!-- Form Header -->
           <div class="flex justify-between items-start mb-12">
