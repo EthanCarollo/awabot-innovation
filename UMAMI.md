@@ -1,3 +1,21 @@
+<p align="center">
+  <table>
+    <tr>
+      <td align="center" style="border: none;">
+        <img src="website/public/umami.png" width="200" alt="Umami Logo"><br>
+        <b>Umami Analytics</b>
+      </td>
+      <td align="center" style="border: none; padding: 0 40px;">
+        <img src="https://img.icons8.com/ios-filled/50/FAC130/plus-math.png" alt="Plus Icon">
+      </td>
+      <td align="center" style="border: none;">
+        <img src="website/public/logo_baseline.svg" width="200" alt="Awabot Logo"><br>
+        <b>Awabot Innovation</b>
+      </td>
+    </tr>
+  </table>
+</p>
+
 # Umami — Analytics respectueux de la vie privée
 
 [Umami](https://umami.is/) est une solution d'analytics web **open-source** et **auto-hébergeable**, utilisée comme alternative à Google Analytics.
