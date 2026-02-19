@@ -1,13 +1,15 @@
 """
-Voxtral Demo — Multi-Service Backend
-=====================================
-FastAPI server with 3 WebSocket endpoints:
-  - /ws/voxtral   → Voxtral ASR (transcription)
-  - /ws/qwen-asr  → Qwen3 ASR (transcription)
-  - /ws/qwen-tts  → Qwen3 TTS (text-to-speech)
+Awabot Demo — Multi-Service Backend
+====================================
+FastAPI server that loads and runs AI models locally.
+
+Endpoints:
+  - /ws/voxtral   -> Voxtral ASR (via vLLM)
+  - /ws/qwen-asr  -> Qwen3 ASR (via qwen-asr)
+  - /ws/qwen-tts  -> Qwen3 TTS (via qwen-tts)
 
 Usage:
-    uvicorn server:app --host 0.0.0.0 --port 8080 --reload
+    uvicorn server:app --host 0.0.0.0 --port 8082 --reload
 """
 
 import os
@@ -20,7 +22,7 @@ from qwen_asr import QwenASR
 from qwen_tts import QwenTTS
 
 # ── Config ───────────────────────────────────────────────────────
-VLLM_HOST = os.getenv("VLLM_HOST", "localhost")
+DEVICE = os.getenv("DEVICE", "cuda:0")
 
 app = FastAPI(title="Awabot Demo Backend")
 
@@ -34,22 +36,31 @@ app.add_middleware(
 
 # ── Service instances ────────────────────────────────────────────
 voxtral = VoxtralASR(
-    vllm_host=VLLM_HOST,
-    vllm_port=int(os.getenv("VOXTRAL_PORT", "8000")),
-    model=os.getenv("VOXTRAL_MODEL", "mistralai/Voxtral-Mini-4B-Realtime-2602"),
+    model_name=os.getenv("VOXTRAL_MODEL", "mistralai/Voxtral-Mini-4B-Realtime-2602"),
+    device=DEVICE,
 )
 
 qwen_asr = QwenASR(
-    vllm_host=VLLM_HOST,
-    vllm_port=int(os.getenv("QWEN_ASR_PORT", "8001")),
-    model=os.getenv("QWEN_ASR_MODEL", "Qwen/Qwen3-ASR-1.7B"),
+    model_name=os.getenv("QWEN_ASR_MODEL", "Qwen/Qwen3-ASR-1.7B"),
+    device=DEVICE,
 )
 
 qwen_tts = QwenTTS(
-    vllm_host=VLLM_HOST,
-    vllm_port=int(os.getenv("QWEN_TTS_PORT", "8002")),
-    model=os.getenv("QWEN_TTS_MODEL", "Qwen/Qwen3-TTS-12Hz-0.6B-Base"),
+    model_name=os.getenv("QWEN_TTS_MODEL", "Qwen/Qwen3-TTS-12Hz-0.6B-Base"),
+    device=DEVICE,
 )
+
+
+# ── Startup: load models ────────────────────────────────────────
+@app.on_event("startup")
+async def load_models():
+    """Load all models into GPU at startup."""
+    # Load each model — failures are non-fatal (endpoint will report error)
+    for name, service in [("Voxtral", voxtral), ("QwenASR", qwen_asr), ("QwenTTS", qwen_tts)]:
+        try:
+            service.load()
+        except Exception as e:
+            print(f"[Startup] Failed to load {name}: {e}")
 
 
 # ── Health ───────────────────────────────────────────────────────
@@ -58,9 +69,9 @@ async def health():
     return {
         "status": "ok",
         "services": {
-            "voxtral_asr": {"url": voxtral.ws_url, "model": voxtral.model},
-            "qwen_asr": {"url": qwen_asr.ws_url, "model": qwen_asr.model},
-            "qwen_tts": {"url": qwen_tts.api_url, "model": qwen_tts.model},
+            "voxtral_asr": {"model": voxtral.model_name, "loaded": voxtral.llm is not None},
+            "qwen_asr": {"model": qwen_asr.model_name, "loaded": qwen_asr.model is not None},
+            "qwen_tts": {"model": qwen_tts.model_name, "loaded": qwen_tts.model is not None},
         },
     }
 

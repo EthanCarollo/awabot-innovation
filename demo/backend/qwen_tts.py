@@ -1,39 +1,51 @@
 """
-QwenTTS — Text-to-Speech via vLLM Audio Speech API (Qwen3-TTS).
+QwenTTS — Local inference via qwen-tts package.
 """
+import io
 import json
-import httpx
+import base64
+import torch
+import soundfile as sf
+from qwen_tts import Qwen3TTSModel
 
 
 class QwenTTS:
-    """
-    Send text to the vLLM TTS endpoint and return audio.
-
-    Uses the OpenAI-compatible /v1/audio/speech endpoint served by vLLM-Omni.
-    """
+    """Load Qwen3-TTS locally and generate speech from text."""
 
     def __init__(
         self,
-        vllm_host: str = "localhost",
-        vllm_port: int = 8002,
-        model: str = "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
-        voice: str = "default",
+        model_name: str = "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+        device: str = "cuda:0",
     ):
-        self.api_url = f"http://{vllm_host}:{vllm_port}/v1/audio/speech"
-        self.model = model
-        self.voice = voice
+        self.model_name = model_name
+        self.device = device
+        self.model = None
+
+    def load(self) -> None:
+        """Load the model into GPU memory. Called once at startup."""
+        print(f"[QwenTTS] Loading {self.model_name} on {self.device}…")
+        self.model = Qwen3TTSModel.from_pretrained(
+            self.model_name,
+            device_map=self.device,
+            dtype=torch.bfloat16,
+        )
+        print(f"[QwenTTS] Model loaded.")
 
     async def handle(self, client_ws) -> None:
         """
-        WebSocket handler for TTS.
+        WebSocket handler.
 
-        Protocol (client <-> this server):
-          IN:  { "type": "tts", "text": "Bonjour le monde", "voice": "default" }
+        Protocol:
+          IN:  { "type": "tts", "text": "Bonjour", "language": "French" }
           OUT: { "type": "status",  "message": "connected" | "generating" }
           OUT: { "type": "audio",   "data": "<base64 wav>", "format": "wav" }
           OUT: { "type": "error",   "message": "..." }
         """
         await client_ws.send_json({"type": "status", "message": "connected"})
+
+        if self.model is None:
+            await client_ws.send_json({"type": "error", "message": "Model not loaded."})
+            return
 
         try:
             while True:
@@ -44,45 +56,33 @@ class QwenTTS:
                     continue
 
                 text = msg["text"]
-                voice = msg.get("voice", self.voice)
+                language = msg.get("language", "French")
 
                 await client_ws.send_json({"type": "status", "message": "generating"})
 
                 try:
-                    async with httpx.AsyncClient(timeout=30.0) as http:
-                        response = await http.post(
-                            self.api_url,
-                            json={
-                                "model": self.model,
-                                "input": text,
-                                "voice": voice,
-                                "response_format": "wav",
-                            },
-                        )
+                    # Generate speech
+                    wavs, sr = self.model.generate_voice_clone(
+                        text=text,
+                        language=language,
+                    )
 
-                    if response.status_code == 200:
-                        import base64
-                        audio_b64 = base64.b64encode(response.content).decode("utf-8")
-                        await client_ws.send_json({
-                            "type": "audio",
-                            "data": audio_b64,
-                            "format": "wav",
-                        })
-                    else:
-                        await client_ws.send_json({
-                            "type": "error",
-                            "message": f"vLLM TTS error ({response.status_code}): {response.text[:200]}",
-                        })
+                    # Encode to WAV bytes
+                    buf = io.BytesIO()
+                    sf.write(buf, wavs[0], sr, format="WAV")
+                    buf.seek(0)
+                    audio_b64 = base64.b64encode(buf.read()).decode("utf-8")
 
-                except httpx.ConnectError:
                     await client_ws.send_json({
-                        "type": "error",
-                        "message": f"Impossible de se connecter au serveur TTS ({self.api_url}). Lancez le serveur d'abord.",
+                        "type": "audio",
+                        "data": audio_b64,
+                        "format": "wav",
                     })
+
                 except Exception as e:
                     await client_ws.send_json({
                         "type": "error",
-                        "message": f"TTS error: {str(e)}",
+                        "message": f"TTS generation error: {str(e)}",
                     })
 
         except Exception:

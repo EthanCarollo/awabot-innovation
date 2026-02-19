@@ -28,7 +28,7 @@
     <TranscriptPanel
       :text="transcript"
       :active="isRecording"
-      cursor-color="#818cf8"
+      cursor-color="#6366f1"
       @clear="clearTranscript"
     />
   </div>
@@ -49,9 +49,9 @@ const { status, isRecording, transcript, audioLevel, start, stop, clearTranscrip
 .controls { text-align: center; margin-bottom: 16px; }
 .btn { display: inline-flex; align-items: center; gap: 10px; font-family: inherit; font-size: 15px; font-weight: 700; padding: 14px 32px; border: none; border-radius: 12px; cursor: pointer; transition: all .2s; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn-start { background: linear-gradient(135deg, #818cf8, #6366f1); color: #fff; box-shadow: 0 4px 20px rgba(99,102,241,.3); }
-.btn-start:hover:not(:disabled) { transform: translateY(-2px); }
-.btn-stop { background: #ef4444; color: #fff; box-shadow: 0 4px 20px rgba(239,68,68,.3); }
-.btn-stop:hover { transform: translateY(-2px); }
+.btn-start { background: #6366f1; color: #fff; }
+.btn-start:hover:not(:disabled) { opacity: 0.85; }
+.btn-stop { background: #ef4444; color: #fff; }
+.btn-stop:hover { opacity: 0.85; }
 .hint { font-size: 13px; color: var(--text-muted); text-align: center; }
 </style>

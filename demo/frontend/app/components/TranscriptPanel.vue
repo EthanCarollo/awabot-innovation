@@ -47,7 +47,6 @@ watch(() => props.text, async () => {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 .card-header {
   display: flex;

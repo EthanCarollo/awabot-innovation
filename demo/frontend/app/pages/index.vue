@@ -74,13 +74,12 @@
   text-decoration: none;
   color: var(--text);
   transition: all 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+
 }
 
 .demo-card:hover {
   border-color: var(--orange);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(255, 126, 34, 0.1);
+  transform: translateY(-2px);
 }
 
 .demo-icon {

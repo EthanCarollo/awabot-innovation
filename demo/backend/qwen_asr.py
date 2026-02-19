@@ -1,77 +1,85 @@
 """
-QwenASR — WebSocket relay for Qwen3-ASR via vLLM Realtime API.
+QwenASR — Local inference via qwen-asr package.
 """
-import asyncio
+import io
 import json
-import websockets
+import base64
+import numpy as np
+import torch
+from qwen_asr import Qwen3ASRModel
 
 
 class QwenASR:
-    """Relay audio to the vLLM Qwen3-ASR Realtime API and stream back transcription deltas."""
+    """Load Qwen3-ASR locally and transcribe audio chunks."""
 
     def __init__(
         self,
-        vllm_host: str = "localhost",
-        vllm_port: int = 8001,
-        model: str = "Qwen/Qwen3-ASR-1.7B",
+        model_name: str = "Qwen/Qwen3-ASR-1.7B",
+        device: str = "cuda:0",
     ):
-        self.ws_url = f"ws://{vllm_host}:{vllm_port}/v1/realtime"
-        self.model = model
+        self.model_name = model_name
+        self.device = device
+        self.model = None
+
+    def load(self) -> None:
+        """Load the model into GPU memory. Called once at startup."""
+        print(f"[QwenASR] Loading {self.model_name} on {self.device}…")
+        self.model = Qwen3ASRModel.from_pretrained(
+            self.model_name,
+            dtype=torch.bfloat16,
+            device_map=self.device,
+            max_new_tokens=256,
+        )
+        print(f"[QwenASR] Model loaded.")
 
     async def handle(self, client_ws) -> None:
         """
-        Main handler: connect to vLLM (Qwen), relay audio, stream transcription back.
+        WebSocket handler.
 
-        Same protocol as VoxtralASR.
+        Protocol:
+          IN:  { "type": "audio", "data": "<base64 PCM16 16kHz>" }
+          OUT: { "type": "transcript", "text": "<full transcription>" }
+          OUT: { "type": "status",  "message": "connected" | "ready" }
+          OUT: { "type": "error",   "message": "..." }
         """
         await client_ws.send_json({"type": "status", "message": "connected"})
 
-        try:
-            async with websockets.connect(self.ws_url) as vllm_ws:
-                init_msg = await vllm_ws.recv()
-                print(f"[QwenASR] vLLM session: {json.loads(init_msg).get('type')}")
+        if self.model is None:
+            await client_ws.send_json({"type": "error", "message": "Model not loaded."})
+            return
 
-                await vllm_ws.send(json.dumps({
-                    "type": "session.update",
-                    "model": self.model,
-                }))
-                await vllm_ws.send(json.dumps({"type": "input_audio_buffer.commit"}))
-                await client_ws.send_json({"type": "status", "message": "ready"})
+        await client_ws.send_json({"type": "status", "message": "ready"})
 
-                await asyncio.gather(
-                    self._relay_audio(client_ws, vllm_ws),
-                    self._relay_transcription(client_ws, vllm_ws),
-                )
+        # Accumulate audio chunks, transcribe on demand
+        audio_buffer = bytearray()
 
-        except websockets.exceptions.ConnectionRefused:
-            await client_ws.send_json({
-                "type": "error",
-                "message": f"Impossible de se connecter à vLLM Qwen ({self.ws_url}). Lancez le serveur d'abord.",
-            })
-        except Exception as e:
-            await client_ws.send_json({"type": "error", "message": str(e)})
-
-    async def _relay_audio(self, client_ws, vllm_ws) -> None:
         try:
             while True:
                 raw = await client_ws.receive_text()
                 msg = json.loads(raw)
-                if msg.get("type") == "audio" and "data" in msg:
-                    await vllm_ws.send(json.dumps({
-                        "type": "input_audio_buffer.append",
-                        "audio": msg["data"],
-                    }))
-        except Exception:
-            pass
 
-    async def _relay_transcription(self, client_ws, vllm_ws) -> None:
-        try:
-            async for message in vllm_ws:
-                data = json.loads(message)
-                if data.get("type") == "transcription.delta":
-                    await client_ws.send_json({
-                        "type": "transcript",
-                        "text": data.get("delta", ""),
-                    })
+                if msg.get("type") == "audio" and "data" in msg:
+                    # Decode base64 PCM16 and accumulate
+                    pcm_bytes = base64.b64decode(msg["data"])
+                    audio_buffer.extend(pcm_bytes)
+
+                    # Transcribe every ~1 second of audio (16000 samples * 2 bytes)
+                    if len(audio_buffer) >= 32000:
+                        pcm = np.frombuffer(bytes(audio_buffer), dtype=np.int16)
+                        audio_float = pcm.astype(np.float32) / 32767.0
+
+                        results = self.model.transcribe(
+                            audio=[(audio_float, 16000)],
+                            language=None,
+                        )
+
+                        if results and results[0].text:
+                            await client_ws.send_json({
+                                "type": "transcript",
+                                "text": results[0].text + " ",
+                            })
+
+                        audio_buffer.clear()
+
         except Exception:
             pass

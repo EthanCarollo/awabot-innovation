@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, onUnmounted } from 'vue'
 
 const config = useRuntimeConfig()
 const wsUrl = `${config.public.wsBackendBase}/ws/qwen-tts`
@@ -108,15 +108,15 @@ onUnmounted(() => { ws?.close(); ws = null })
   background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px;
   padding: 16px; resize: vertical; outline: none; transition: border-color .2s;
 }
-.textarea:focus { border-color: var(--yellow); }
+.textarea:focus { border-color: var(--orange); }
 .textarea::placeholder { color: var(--text-muted); }
 .input-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
 .char-count { font-size: 12px; color: var(--text-muted); }
 .btn { font-family: inherit; font-size: 15px; font-weight: 700; padding: 12px 28px; border: none; border-radius: 12px; cursor: pointer; transition: all .2s; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn-generate { background: linear-gradient(135deg, var(--yellow), var(--orange)); color: #fff; box-shadow: 0 4px 20px rgba(250,193,48,.3); }
-.btn-generate:hover:not(:disabled) { transform: translateY(-2px); }
-.error-box { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); border-radius: 12px; padding: 16px; color: #fca5a5; font-size: 14px; margin-bottom: 16px; }
+.btn-generate { background: var(--yellow); color: var(--carbon); }
+.btn-generate:hover:not(:disabled) { opacity: 0.85; }
+.error-box { background: rgba(239,68,68,.06); border: 1px solid rgba(239,68,68,.2); border-radius: 12px; padding: 16px; color: #dc2626; font-size: 14px; margin-bottom: 16px; }
 .audio-player { text-align: center; }
 .player { width: 100%; border-radius: 12px; margin-bottom: 8px; }
 .audio-info { font-size: 12px; color: var(--text-muted); }
