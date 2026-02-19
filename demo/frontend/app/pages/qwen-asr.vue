@@ -3,14 +3,14 @@
     <header class="header">
       <div class="header-left">
         <div class="title-row">
-          <h1 class="title">Voice Cloning Lab</h1>
+          <h1 class="title">Qwen3 ASR</h1>
           <StatusBadge :status="status" />
         </div>
-        <p class="subtitle">Enregistrez votre empreinte vocale pour générer un clone haute-fidélité.</p>
+        <p class="subtitle">Transcription robuste supportant plus de 52 langues via Qwen3 1.7B.</p>
       </div>
       <div class="header-actions">
         <button class="btn btn-secondary" @click="clearTranscript" :disabled="!transcript">
-          Réinitialiser
+          Effacer
         </button>
       </div>
     </header>
@@ -19,26 +19,25 @@
       <!-- Left Panel: Vision & Interaction -->
       <div class="panel-left">
         <div class="card video-card hero-card">
-          <div class="card-label">Capture de Référence</div>
+          <div class="card-label">Flux Video & Vision</div>
           <div class="video-viewport">
             <video v-show="cameraActive" ref="videoEl" autoplay playsinline muted class="video-feed"></video>
             <div v-if="!cameraActive" class="video-placeholder">
               <div class="placeholder-art">
                 <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.75">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                  <line x1="12" y1="19" x2="12" y2="23"/>
-                  <line x1="8" y1="23" x2="16" y2="23"/>
+                  <path d="M23 7l-7 5 7 5V7z"/>
+                  <rect x="1" y="5" width="15" height="14" rx="3" ry="3"/>
+                  <circle cx="8.5" cy="12" r="1.5"/>
                 </svg>
               </div>
-              <p>Prêt pour l'enregistrement</p>
-              <span>Veuillez lire le script à voix haute pour le clonage</span>
+              <p>Camera prète</p>
+              <span>Relancez la capture pour activer le retour visuel</span>
             </div>
           </div>
         </div>
 
         <div class="card interaction-card">
-          <div class="card-label">Enregistrement Empreinte</div>
+          <div class="card-label">Commandes vocales</div>
           <div class="interaction-body">
             <div class="action-btn-wrapper">
               <button v-if="!isRecording" class="btn btn-primary btn-record" @click="toggleRecording" :disabled="status === 'connecting'">
@@ -46,11 +45,11 @@
                    <div class="pulse-ring"></div>
                    <div class="dot"></div>
                 </div>
-                Démarrer l'enregistrement
+                Démarrer la transcription
               </button>
               <button v-else class="btn btn-stop" @click="toggleRecording">
                 <div class="stop-icon"></div>
-                Finaliser l'empreinte
+                Arrêter la transcription
               </button>
             </div>
             

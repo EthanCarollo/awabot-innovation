@@ -8,6 +8,8 @@ import base64
 import asyncio
 import numpy as np
 
+os.environ["VLLM_USE_V1"] = "0"
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 

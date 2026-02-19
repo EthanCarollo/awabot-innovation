@@ -3,10 +3,10 @@
     <header class="header">
       <div class="header-left">
         <div class="title-row">
-          <h1 class="title">Qwen3 TTS</h1>
+          <h1 class="title">Voice Cloning Lab</h1>
           <StatusBadge :status="status" />
         </div>
-        <p class="subtitle">Synthese vocale naturelle et clonage de voix via Qwen3 0.6B.</p>
+        <p class="subtitle">Générez des voix ultra-réalistes par clonage ou synthèse naturelle.</p>
       </div>
     </header>
 
@@ -128,20 +128,28 @@
           <div class="card-label">Fiche Technique</div>
           <div class="info-grid">
             <div class="info-field">
-              <span class="info-key">Modele</span>
-              <code class="info-val">Qwen3-TTS-0.6B</code>
+              <span class="info-key">Modèle</span>
+              <code class="info-val">Qwen3-TTS 0.6B</code>
             </div>
             <div class="info-field">
-              <span class="info-key">Frequence</span>
-              <code class="info-val">12Hz (Flow)</code>
+              <span class="info-key">Architecture</span>
+              <code class="info-val">Flow-based</code>
+            </div>
+            <div class="info-field">
+              <span class="info-key">Clonage</span>
+              <code class="info-val">Zero-Shot / 1:1</code>
+            </div>
+            <div class="info-field">
+              <span class="info-key">Audio</span>
+              <code class="info-val">44.1 kHz / Hi-Fi</code>
             </div>
           </div>
           <p class="info-desc">
-            Ce modele compact permet de cloner n'importe quelle voix a partir d'un simple echantillon audio, tout en conservant une expressivite naturelle.
+            Technologie de pointe permettant de capturer l'essence d'une voix en seulement quelques secondes. Clonez votre timbre, votre émotion et votre débit pour une synthèse indiscernable de la réalité.
           </p>
           <a href="https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base" target="_blank" class="hf-btn">
             <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="" />
-            Hugging Face Repository
+            Repository Officiel
           </a>
         </div>
       </div>

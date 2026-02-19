@@ -188,6 +188,16 @@ La dernière étape du moteur d'interaction consiste à transformer le texte tra
 *   **Modèle recommandé : [Qwen3-TTS (0.6B)](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base)** :
     *   **Extrême légèreté** : Avec seulement 600M de paramètres, il est extrêmement rapide et facile à mettre en production sur une architecture optimisée.
     *   **Clonage de voix** : Permet de cloner une voix spécifique pour une expérience utilisateur personnalisée.
+
+<video-showcase 
+  src="/test-qwentts.mp4" 
+  caption="Démonstration du clonage vocal Qwen3-TTS (0.6B) en local"
+/>
+
+> [!IMPORTANT]
+> **Viabilité et Déploiement Professionnel** : Cette vidéo démontre que Qwen3-TTS peut être exécuté localement avec une fluidité totale sur une configuration grand public modeste (NVIDIA RTX 5060). 
+> Le modèle étant extrêmement compact (600M), son déploiement sur des infrastructures professionnelles haute performance (ex: NVIDIA H200 ou H100) ne posera aucune difficulté technique et offrira une latence quasiment imperceptible, idéale pour des environnements de production à haute disponibilité.
+
 *   **Exclusion de [Hibiki (Kyutai)](https://kyutai.org/blog/2025-02-10-hibiki)** : Bien que prometteur, ce modèle (sorti en février 2026) est jugé trop peu mature. Son architecture est actuellement limitée au français et à l'anglais, ce qui ne répond pas aux ambitions multilingues du projet.
 
 ## 4. Conception UI et logique d'intégration
