@@ -3,15 +3,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxt/content'],
-
-  content: {
-    // The markdown files live in content/
-  },
+  modules: ['@nuxt/content', '@nuxtjs/tailwindcss'],
 
   app: {
     head: {
-      title: 'Cahier des Charges — Awabot',
+      title: 'Awabot',
       link: [
         {
           rel: 'stylesheet',
