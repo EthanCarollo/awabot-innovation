@@ -4,8 +4,6 @@ import {
     spring,
     useCurrentFrame,
     useVideoConfig,
-    Img,
-    staticFile,
 } from "remotion";
 
 export const TranslationAnim = () => {
