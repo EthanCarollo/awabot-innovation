@@ -1,5 +1,63 @@
 <template>
   <div class="min-h-screen bg-[#F5F6F7]">
+    <!-- Mobile TOC Drawer & Overlay -->
+    <Transition name="fade">
+      <div v-if="isTocOpen" @click="isTocOpen = false" class="fixed inset-0 z-[60] bg-[#111111]/20 lg:hidden backdrop-blur-sm"></div>
+    </Transition>
+
+    <div 
+      class="fixed inset-y-0 left-0 z-[70] w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col pt-8"
+      :class="isTocOpen ? 'translate-x-0' : '-translate-x-full'"
+    >
+       <div class="px-6 pb-6 overflow-y-auto flex-1 toc-scroll">
+         <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
+           <div class="flex items-center gap-2">
+             <div class="w-1.5 h-4 bg-awabot-orange rounded-full" />
+             <h4 class="text-xs font-bold uppercase tracking-widest text-[#111111]/40">Sommaire</h4>
+           </div>
+           <button @click="isTocOpen = false" class="text-gray-400 hover:text-gray-800 transition-colors p-2 bg-gray-50 rounded-lg">
+             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+             </svg>
+           </button>
+         </div>
+         <nav v-if="page?.body?.toc?.links" class="space-y-1">
+            <template v-for="link in page.body.toc.links" :key="link.id">
+              <a
+                :href="`#${link.id}`"
+                class="block text-[14px] py-3 px-3 rounded-lg text-[#111111]/70 hover:bg-awabot-orange/5 hover:text-awabot-orange transition-colors"
+                :class="{ 'text-awabot-orange font-bold bg-awabot-orange/5': activeId === link.id }"
+                @click.prevent="scrollTo(link.id)"
+              >
+                {{ link.text }}
+              </a>
+              <template v-if="link.children">
+                <a
+                  v-for="child in link.children"
+                  :key="child.id"
+                  :href="`#${child.id}`"
+                  class="block text-[13px] py-2 px-3 pl-6 rounded-lg text-[#111111]/50 hover:bg-awabot-orange/5 hover:text-awabot-orange transition-colors line-clamp-2"
+                  :class="{ 'text-awabot-orange font-semibold bg-awabot-orange/5': activeId === child.id }"
+                  @click.prevent="scrollTo(child.id)"
+                >
+                  {{ child.text }}
+                </a>
+              </template>
+            </template>
+         </nav>
+       </div>
+    </div>
+
+    <!-- Floating TOC Button (Mobile) -->
+    <button 
+      @click="isTocOpen = true"
+      class="lg:hidden fixed bottom-6 left-6 z-[50] w-14 h-14 bg-awabot-orange text-white rounded-full shadow-lg shadow-awabot-orange/30 flex items-center justify-center hover:scale-105 transition-all active:scale-95"
+      :class="{ 'translate-y-24 opacity-0 pointer-events-none': isTocOpen }"
+      aria-label="Ouvrir le sommaire"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+    </button>
+
     <!-- Top bar -->
     <header class="sticky top-0 z-50 bg-[#F5F6F7]/90 backdrop-blur-md border-b border-gray-200 h-20">
       <nav class="max-w-[1700px] mx-auto px-6 md:px-12 lg:px-20 h-full flex items-center justify-between relative">
@@ -60,46 +118,6 @@
 
       <!-- Document -->
       <main class="flex-1 min-w-0">
-        
-        <!-- Mobile TOC -->
-        <div class="block lg:hidden mb-6">
-          <details class="bg-white rounded-2xl border border-gray-100 p-4 transition-all group">
-            <summary class="font-bold text-[#111111] cursor-pointer flex justify-between items-center outline-none list-none [&::-webkit-details-marker]:hidden">
-              <div class="flex items-center gap-2">
-                <div class="w-1 h-3 bg-awabot-orange rounded-full" />
-                <span class="text-[11px] uppercase tracking-widest text-[#111111]/60">Sommaire</span>
-              </div>
-              <svg class="w-5 h-5 text-gray-400 transform transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </summary>
-            <nav v-if="page?.body?.toc?.links" class="mt-4 space-y-2 border-t border-gray-100 pt-4">
-              <template v-for="link in page.body.toc.links" :key="link.id">
-                <a
-                  :href="`#${link.id}`"
-                  class="block text-[14px] py-1 text-[#111111]/70 hover:text-awabot-orange transition-colors"
-                  :class="{ 'text-awabot-orange font-bold': activeId === link.id }"
-                  @click.prevent="scrollTo(link.id)"
-                >
-                  {{ link.text }}
-                </a>
-                <template v-if="link.children">
-                  <a
-                    v-for="child in link.children"
-                    :key="child.id"
-                    :href="`#${child.id}`"
-                    class="block text-[13px] py-1 pl-4 text-[#111111]/50 hover:text-awabot-orange transition-colors line-clamp-1"
-                    :class="{ 'text-awabot-orange font-semibold': activeId === child.id }"
-                    @click.prevent="scrollTo(child.id)"
-                  >
-                    {{ child.text }}
-                  </a>
-                </template>
-              </template>
-            </nav>
-          </details>
-        </div>
-
         <article class="bg-white rounded-2xl sm:rounded-[32px] border border-gray-100 p-6 sm:p-10 md:p-16 lg:p-20 prose prose-slate prose-base sm:prose-lg max-w-none
           prose-headings:font-black prose-headings:tracking-tight prose-headings:text-[#111111]
           
@@ -139,7 +157,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+
+const isTocOpen = ref(false)
+
+// Prevent body scroll when TOC is open on mobile
+watch(isTocOpen, (val) => {
+  if (typeof window !== 'undefined') {
+    document.body.style.overflow = val ? 'hidden' : ''
+  }
+})
 
 useHead({ 
   title: 'Cahier des Charges — Awabot',
@@ -161,6 +188,7 @@ function scrollTo(id: string) {
     const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset
     window.scrollTo({ top: y, behavior: 'smooth' })
     activeId.value = id
+    isTocOpen.value = false
   }
 }
 
@@ -197,6 +225,15 @@ onUnmounted(() => {
 </script>
 
 <style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 .toc-scroll::-webkit-scrollbar {
   width: 4px;
 }
