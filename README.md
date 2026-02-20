@@ -1,78 +1,91 @@
 <p align="center">
-  <img src="website/public/logo_baseline.svg" width="300" alt="Awabot Logo">
+  <img src="website/public/logo_baseline.svg" width="400" alt="Awabot Logo">
 </p>
 
-# Awabot Innovation — Téléprésence Intelligente
+# Awabot Innovation — Téléprésence & IA Souveraine
 
-<p align="center">
-  <a href="https://github.com/EthanCarollo/awabot-innovation"><img alt="GitHub" src="https://img.shields.io/badge/github-awabot--innovation-orange?logo=github&style=flat-square" /></a>
-</p>
+[![GitHub](https://img.shields.io/badge/github-awabot--innovation-orange?logo=github&style=flat-square)](https://github.com/EthanCarollo/awabot-innovation)
+
+> [!NOTE]
+> **Contexte du Projet :** Ce travail est réalisé dans le cadre d'un **Workshop d'Innovation** au sein de l'école **by CCI Gobelins Annecy**. L'objectif principal est de formuler une proposition d'innovation concrète et technique basée sur un concept de téléprésence donné.
+
+Ce dépôt centralise les travaux de recherche, de prototypage et de spécification technique pour la **nouvelle génération d'interfaces Awabot**. L'objectif est de transformer la téléprésence robotique en une expérience immersive, accessible et intelligente, tout en garantissant une **souveraineté totale des données**.
 
 ---
 
-## Structure du Projet
+## Vision & Concept
+
+Nous construisons une plateforme de **tourisme immersif à distance**. Un utilisateur peut piloter un robot Awabot dans un lieu culturel (musée, monument) tout en bénéficiant :
+- **D'une interface Full Web** moderne et réactive (Nuxt.js).
+- **D'une intelligence artificielle embarquée** pour la transcription (ASR), la traduction (NMT) et la synthèse vocale (TTS).
+- **D'une accessibilité universelle**, pensée pour l'inclusion sociale des personnes à mobilité réduite ou isolées.
+
+---
+
+## Architecture du Projet
 
 ```
 awabot/
-├── website/          # Site vitrine Nuxt.js + Cahier des Charges
-├── demo/             # Démo Voxtral Realtime (Nuxt + Python WS)
-│   ├── backend/      # Serveur FastAPI (relais WebSocket vers vLLM)
-│   └── frontend/     # Interface Nuxt.js (capture micro + transcription)
-└── lab/              # Expérimentations & Prototypes
-    ├── voxtral-gradio/    # Prototype Gradio Voxtral + Caméra
-    ├── remotion_comparatif/ # Vidéo comparative ASR (Remotion)
-    └── realbench/         # Benchmarks temps réel
+├── website/          # Platforme Nuxt.js + Spécifications (CDC)
+├── demo/             # Démonstrateurs Temps Réel (ASR/TTS)
+│   ├── backend/      # Relais WebSocket vers serveurs d'inférence
+│   └── frontend/     # Cockpit de pilotage & transcription
+└── lab/              # Laboratoire R&D
+    ├── voxtral-gradio/    # POC Inférence Mistral/Voxtral
+    ├── remotion_comparatif/ # Visualisation de data & benchmarks
+    └── realbench/         # Mesures de latence & WER
 ```
 
-## Website
+---
 
-Site vitrine Awabot avec le **Cahier des Charges** interactif.
+## Le Moteur d'Interaction (Stack IA)
 
+Notre architecture repose sur des modèles **Open-Weight** auto-hébergés via **vLLM** pour une confidentialité et une latence minimales.
+
+### Transcription (ASR)
+- **Modèles :** [Voxtral Mini 4B](https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602) (Optimal FR/EU) & [Qwen3-ASR](https://github.com/QwenLM/Qwen-Audio) (Optimal EN/ZH).
+- **Performance :** Latence configurable à partir de 80ms.
+
+### Traduction (NMT)
+- **Choix MVP :** [LibreTranslate](https://fr.libretranslate.com/) (Open-source, gratuit, déploiement simple).
+- **Alternatives LLM :** HY-MT, Gemma Translate pour une correction contextuelle avancée.
+
+### Synthèse Vocale (TTS)
+- **Modèle :** [Qwen3-TTS-0.6B](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base).
+- **Capacité :** Clonage de voix en temps réel sur infrastructure standard.
+
+---
+
+## Documentation & Ressources
+
+Le projet est régi par un **Cahier des Charges (CDC)** vivant qui documente les choix stratégiques et techniques.
+- **Accès direct :** [website/content/cdc.md](website/content/cdc.md) (ou via l'interface web locale).
+- **Benchmarks :** Résultats détaillés dans le dossier `lab/realbench`.
+- **Analytics :** Infrastructure [Umami](https://umami.is/) pour le suivi respectueux (voir [UMAMI.md](UMAMI.md)).
+
+---
+
+## Démarrage Rapide
+
+### 1. Website & Documentation
 ```bash
 cd website
-npm install
-npm run dev -- --port 3000
+npm install && npm run dev
 ```
 
-> Accessible sur [http://localhost:3000](http://localhost:3000)
-> Cahier des Charges sur [http://localhost:3000/cdc](http://localhost:3000/cdc)
-
-## Demo — Voxtral Realtime
-
-Démo de transcription audio temps réel via **Voxtral Mini 4B** (vLLM Realtime API).
-
-### Backend (Python)
-
+### 2. Démo ASR Voxtral
 ```bash
+# Backend (Inférence & WS)
 cd demo/backend
-pip install -r requirements.txt
-uvicorn server:app --host 0.0.0.0 --port 8080 --reload
-```
+pip install -r requirements.txt && python server.py
 
-### Frontend (Nuxt)
-
-```bash
+# Frontend (Capture & UI)
 cd demo/frontend
-npm install
-npm run dev -- --port 3001
+npm install && npm run dev
 ```
 
-> Requiert un serveur vLLM actif avec Voxtral (`bash lab/voxtral-gradio/serve.sh`)
+---
 
-## Lab — Expérimentations
-
-| Dossier | Description |
-|---|---|
-| `voxtral-gradio/` | Prototype Gradio: webcam + transcription temps réel |
-| `remotion_comparatif/` | Vidéo de comparaison des modèles ASR |
-| `realbench/` | Benchmarks de performance en conditions réelles |
-
-## Stack Technique
-
-- **Frontend** — [Nuxt.js](https://nuxt.com/) + [TailwindCSS](https://tailwindcss.com/)
-- **Backend** — [Django REST Framework](https://www.django-rest-framework.org/) + [FastAPI](https://fastapi.tiangolo.com/)
-- **ASR** — [Voxtral](https://mistral.ai/) + [Qwen3-ASR](https://github.com/QwenLM/Qwen-Audio)
-- **Traduction** — [HY-MT](https://huggingface.co/tencent/HY-MT1.5-1.8B) / [Gemma Translate](https://huggingface.co/google/translategemma-4b-it) / [LibreTranslate](https://fr.libretranslate.com/)
-- **TTS** — [Qwen3-TTS](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base)
-- **Inférence** — [vLLM](https://vllm.ai/)
-- **Analytics** — [Umami](https://umami.is/) ([guide de setup](UMAMI.md))
+<p align="center">
+  <i>Awabot Innovation — Connecter les humains, par-delà les frontières.</i>
+</p>

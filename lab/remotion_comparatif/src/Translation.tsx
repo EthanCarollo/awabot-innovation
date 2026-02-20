@@ -100,7 +100,7 @@ export const TranslationAnim = () => {
                         width: 400,
                     }}
                 >
-                    <span style={{ fontSize: 24, fontWeight: 700, color: "#94A3B8" }}>FR 🇫🇷</span>
+                    <span style={{ fontSize: 24, fontWeight: 700, color: "#94A3B8" }}>FR </span>
                     <div
                         style={{
                             padding: "32px 40px",
@@ -142,7 +142,7 @@ export const TranslationAnim = () => {
                         width: 400,
                     }}
                 >
-                    <span style={{ fontSize: 24, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}>🇬🇧 EN</span>
+                    <span style={{ fontSize: 24, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}> EN</span>
                     <div
                         style={{
                             padding: "32px 40px",
